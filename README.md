@@ -14,4 +14,4 @@ Demonstration von CRUD-Operationen (Create, Read, Update, Delete) für Flugzeuge
 Verwendung von JavaScript und TypeScript als Programmiersprachen
 
 <h3> Zusätzliche Hinweise: </h3>
-Das Projekt ensteht in Zusammenarbeit als Zweierteam
+Das Projekt ensteht in Zusammenarbeit als Zweierteam.
