@@ -49,10 +49,10 @@ import {
     UpdateDateColumn,
     VersionColumn,
 } from 'typeorm';
-import { Abbildung } from './abbildung.entity.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
-import { Titel } from './titel.entity.js';
+import { Modell } from './modell.entity.js';
+import { Sitzplatz } from './sitzplatz.entity.js';
 import { dbType } from '../../config/db.js';
 
 /**
@@ -88,16 +88,21 @@ export class Flugzeug {
     readonly baujahr: Date | string | undefined;
 
     // undefined wegen Updates
-    @OneToOne(() => Titel, (titel) => modell.flugzeug, {
+    @OneToOne(() => Modell, (modell) => modell.flugzeug, {
         cascade: ['insert', 'remove'],
     })
     readonly modell: Modell | undefined;
 
     // undefined wegen Updates
-    @OneToMany(() => Abbildung, (abbildung) => abbildung.buch, {
+    @OneToMany(() => Sitzplatz, (sitzplatz) => sitzplatz.flugzeug, {
         cascade: ['insert', 'remove'],
     })
-    readonly sitzplatz: Sitzplatz[] | undefined;
+    readonly sitzplaetze: Sitzplatz[] | undefined;
+
+    @CreateDateColumn({
+        type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
+    })
+    readonly erzeugt: Date | undefined;
 
     @UpdateDateColumn({
         type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
@@ -109,6 +114,9 @@ export class Flugzeug {
             id: this.id,
             version: this.version,
             preis: this.preis,
+            einsatzbereit: this.einsatzbereit,
+            baujahr: this.baujahr,
+            erzeugt: this.erzeugt,
             aktualisiert: this.aktualisiert,
         });
 }
