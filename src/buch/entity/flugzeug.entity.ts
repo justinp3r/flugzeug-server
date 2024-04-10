@@ -56,16 +56,11 @@ import { Titel } from './titel.entity.js';
 import { dbType } from '../../config/db.js';
 
 /**
- * Alias-Typ für gültige Strings bei der Art eines Buches.
- */
-export type BuchArt = 'DRUCKAUSGABE' | 'KINDLE';
-
-/**
  * Entity-Klasse zu einem relationalen Tabelle
  */
 // https://typeorm.io/entities
 @Entity()
-export class Buch {
+export class Flugzeug {
     // https://typeorm.io/entities#primary-columns
     // default: strategy = 'increment' (SEQUENCE, GENERATED ALWAYS AS IDENTITY, AUTO_INCREMENT)
     @PrimaryGeneratedColumn()
@@ -73,18 +68,6 @@ export class Buch {
 
     @VersionColumn()
     readonly version: number | undefined;
-
-    @Column()
-    @ApiProperty({ example: '0-0070-0644-6', type: String })
-    readonly isbn!: string;
-
-    @Column('int')
-    @ApiProperty({ example: 5, type: Number })
-    readonly rating: number | undefined;
-
-    @Column('varchar')
-    @ApiProperty({ example: 'DRUCKAUSGABE', type: String })
-    readonly art: BuchArt | undefined;
 
     @Column('decimal', {
         precision: 8,
@@ -95,53 +78,26 @@ export class Buch {
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
     readonly preis!: number;
 
-    @Column('decimal', {
-        precision: 4,
-        scale: 3,
-        transformer: new DecimalTransformer(),
-    })
-    @ApiProperty({ example: 0.1, type: Number })
-    readonly rabatt: number | undefined;
-
     @Column('decimal') // TypeORM unterstuetzt bei Oracle *NICHT* den Typ boolean
     @ApiProperty({ example: true, type: Boolean })
-    readonly lieferbar: boolean | undefined;
+    readonly einsatzbereit: boolean | undefined;
 
     @Column('date')
     @ApiProperty({ example: '2021-01-31' })
     // TypeORM unterstuetzt *NICHT* das Temporal-API (ES2022)
-    readonly datum: Date | string | undefined;
-
-    @Column('date')
-    @ApiProperty({ example: 'https://test.de/', type: String })
-    readonly homepage: string | undefined;
-
-    // https://typeorm.io/entities#simple-array-column-type
-    // nicht "readonly": null ersetzen durch []
-    @Column('simple-array')
-    schlagwoerter: string[] | null | undefined;
+    readonly baujahr: Date | string | undefined;
 
     // undefined wegen Updates
-    @OneToOne(() => Titel, (titel) => titel.buch, {
+    @OneToOne(() => Titel, (titel) => modell.flugzeug, {
         cascade: ['insert', 'remove'],
     })
-    readonly titel: Titel | undefined;
+    readonly modell: Modell | undefined;
 
     // undefined wegen Updates
     @OneToMany(() => Abbildung, (abbildung) => abbildung.buch, {
         cascade: ['insert', 'remove'],
     })
-    readonly abbildungen: Abbildung[] | undefined;
-
-    // https://typeorm.io/entities#special-columns
-    // https://typeorm.io/entities#column-types-for-postgres
-    // https://typeorm.io/entities#column-types-for-mysql--mariadb
-    // https://typeorm.io/entities#column-types-for-oracle
-    // https://typeorm.io/entities#column-types-for-sqlite--cordova--react-native--expo
-    @CreateDateColumn({
-        type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
-    })
-    readonly erzeugt: Date | undefined;
+    readonly sitzplatz: Sitzplatz[] | undefined;
 
     @UpdateDateColumn({
         type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
@@ -152,16 +108,7 @@ export class Buch {
         JSON.stringify({
             id: this.id,
             version: this.version,
-            isbn: this.isbn,
-            rating: this.rating,
-            art: this.art,
             preis: this.preis,
-            rabatt: this.rabatt,
-            lieferbar: this.lieferbar,
-            datum: this.datum,
-            homepage: this.homepage,
-            schlagwoerter: this.schlagwoerter,
-            erzeugt: this.erzeugt,
             aktualisiert: this.aktualisiert,
         });
 }
