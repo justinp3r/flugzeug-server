@@ -22,29 +22,25 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Buch } from './flugzeug.entity.js';
+import { Flugzeug } from './flugzeug.entity.js';
 
 @Entity()
-export class Abbildung {
+export class Sitzplatz {
     // https://typeorm.io/entities#primary-columns
     // CAVEAT: zuerst @Column() und erst dann @PrimaryGeneratedColumn()
     @PrimaryGeneratedColumn()
     id: number | undefined;
 
     @Column()
-    readonly beschriftung!: string;
+    readonly sitzplatzklasse!: string;
 
-    @Column('varchar')
-    readonly contentType: string | undefined;
-
-    @ManyToOne(() => Buch, (buch) => buch.abbildungen)
-    @JoinColumn({ name: 'buch_id' })
-    buch: Buch | undefined;
+    @ManyToOne(() => Flugzeug, (flugzeug) => flugzeug.sitzplaetze)
+    @JoinColumn({ name: 'flugzeug_id' })
+    flugzeug: Flugzeug | undefined;
 
     public toString = (): string =>
         JSON.stringify({
             id: this.id,
-            beschriftung: this.beschriftung,
-            contentType: this.contentType,
+            sitzplatzklasse: this.sitzplatzklasse,
         });
 }
