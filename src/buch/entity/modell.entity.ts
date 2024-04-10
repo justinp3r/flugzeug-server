@@ -22,28 +22,23 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Buch } from './flugzeug.entity.js';
+import { Flugzeug } from './flugzeug.entity.js';
 
 @Entity()
-export class Titel {
-    // https://typeorm.io/entities#primary-columns
+export class Modell {
     @PrimaryGeneratedColumn()
     id: number | undefined;
 
     @Column()
-    readonly titel!: string;
+    readonly modell!: string;
 
-    @Column('varchar')
-    readonly untertitel: string | undefined;
-
-    @OneToOne(() => Buch, (buch) => buch.titel)
-    @JoinColumn({ name: 'buch_id' })
-    buch: Buch | undefined;
+    @OneToOne(() => Flugzeug, (flugzeug) => flugzeug.modell)
+    @JoinColumn({ name: 'flugzeug_id' })
+    flugzeug: Flugzeug | undefined;
 
     public toString = (): string =>
         JSON.stringify({
             id: this.id,
-            titel: this.titel,
-            untertitel: this.untertitel,
+            modell: this.modell,
         });
 }
