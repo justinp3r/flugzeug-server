@@ -21,12 +21,12 @@
  */
 
 import { Abbildung } from '../entity/abbildung.entity.js';
-import { Buch } from '../entity/buch.entity.js';
+import { Flugzeug } from '../entity/flugzeug.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { Modell } from '../entity/modell.entity.js';
 import { Repository } from 'typeorm';
 import { type Suchkriterien } from './suchkriterien.js';
-import { Titel } from '../entity/titel.entity.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/typeormOptions.js';
 
@@ -43,23 +43,23 @@ export interface BuildIdParams {
  */
 @Injectable()
 export class QueryBuilder {
-    readonly #buchAlias = `${Buch.name
+    readonly #flugzeugAlias = `${Flugzeug.name
         .charAt(0)
-        .toLowerCase()}${Buch.name.slice(1)}`;
+        .toLowerCase()}${Flugzeug.name.slice(1)}`;
 
-    readonly #titelAlias = `${Titel.name
+    readonly #modellAlias = `${Modell.name
         .charAt(0)
-        .toLowerCase()}${Titel.name.slice(1)}`;
+        .toLowerCase()}${Modell.name.slice(1)}`;
 
     readonly #abbildungAlias = `${Abbildung.name
         .charAt(0)
         .toLowerCase()}${Abbildung.name.slice(1)}`;
 
-    readonly #repo: Repository<Buch>;
+    readonly #repo: Repository<Flugzeug>;
 
     readonly #logger = getLogger(QueryBuilder.name);
 
-    constructor(@InjectRepository(Buch) repo: Repository<Buch>) {
+    constructor(@InjectRepository(Flugzeug) repo: Repository<Flugzeug>) {
         this.#repo = repo;
     }
 
@@ -70,23 +70,23 @@ export class QueryBuilder {
      */
     buildId({ id, mitAbbildungen = false }: BuildIdParams) {
         // QueryBuilder "buch" fuer Repository<Buch>
-        const queryBuilder = this.#repo.createQueryBuilder(this.#buchAlias);
+        const queryBuilder = this.#repo.createQueryBuilder(this.#flugzeugAlias);
 
         // Fetch-Join: aus QueryBuilder "buch" die Property "titel" ->  Tabelle "titel"
         queryBuilder.innerJoinAndSelect(
-            `${this.#buchAlias}.titel`,
-            this.#titelAlias,
+            `${this.#flugzeugAlias}.titel`,
+            this.#modellAlias,
         );
 
         if (mitAbbildungen) {
             // Fetch-Join: aus QueryBuilder "buch" die Property "abbildungen" -> Tabelle "abbildung"
             queryBuilder.leftJoinAndSelect(
-                `${this.#buchAlias}.abbildungen`,
+                `${this.#flugzeugAlias}.abbildungen`,
                 this.#abbildungAlias,
             );
         }
 
-        queryBuilder.where(`${this.#buchAlias}.id = :id`, { id: id }); // eslint-disable-line object-shorthand
+        queryBuilder.where(`${this.#flugzeugAlias}.id = :id`, { id: id }); // eslint-disable-line object-shorthand
         return queryBuilder;
     }
 
@@ -97,18 +97,12 @@ export class QueryBuilder {
      */
     // z.B. { titel: 'a', rating: 5, javascript: true }
     // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
-    // eslint-disable-next-line max-lines-per-function
-    build({ titel, javascript, typescript, ...props }: Suchkriterien) {
-        this.#logger.debug(
-            'build: titel=%s, javascript=%s, typescript=%s, props=%o',
-            titel,
-            javascript,
-            typescript,
-            props,
-        );
+    build({ modell, ...props }: Suchkriterien) {
+        this.#logger.debug('build: modell=%s, props=%o', modell, props);
 
-        let queryBuilder = this.#repo.createQueryBuilder(this.#buchAlias);
-        queryBuilder.innerJoinAndSelect(`${this.#buchAlias}.titel`, 'titel');
+        let queryBuilder = this.#repo.createQueryBuilder(this.#flugzeugAlias);
+        // eslint-disable-next-line prettier/prettier
+        queryBuilder.innerJoinAndSelect(`${this.#flugzeugAlias}.modell`, 'modell');
 
         // z.B. { titel: 'a', rating: 5, javascript: true }
         // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
@@ -120,35 +114,13 @@ export class QueryBuilder {
         // Titel in der Query: Teilstring des Titels und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
         // type-coverage:ignore-next-line
-        if (titel !== undefined && typeof titel === 'string') {
+        if (modell !== undefined && typeof modell === 'string') {
             const ilike =
                 typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
             queryBuilder = queryBuilder.where(
-                `${this.#titelAlias}.titel ${ilike} :titel`,
-                { titel: `%${titel}%` },
+                `${this.#modellAlias}.titel ${ilike} :titel`,
+                { modell: `%${modell}%` },
             );
-            useWhere = false;
-        }
-
-        if (javascript === 'true') {
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#buchAlias}.schlagwoerter like '%JAVASCRIPT%'`,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#buchAlias}.schlagwoerter like '%JAVASCRIPT%'`,
-                  );
-            useWhere = false;
-        }
-
-        if (typescript === 'true') {
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#buchAlias}.schlagwoerter like '%TYPESCRIPT%'`,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#buchAlias}.schlagwoerter like '%TYPESCRIPT%'`,
-                  );
             useWhere = false;
         }
 
@@ -158,11 +130,11 @@ export class QueryBuilder {
             param[key] = (props as Record<string, any>)[key]; // eslint-disable-line @typescript-eslint/no-unsafe-assignment, security/detect-object-injection
             queryBuilder = useWhere
                 ? queryBuilder.where(
-                      `${this.#buchAlias}.${key} = :${key}`,
+                      `${this.#flugzeugAlias}.${key} = :${key}`,
                       param,
                   )
                 : queryBuilder.andWhere(
-                      `${this.#buchAlias}.${key} = :${key}`,
+                      `${this.#flugzeugAlias}.${key} = :${key}`,
                       param,
                   );
             useWhere = false;

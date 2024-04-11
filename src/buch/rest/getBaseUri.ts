@@ -20,7 +20,7 @@
  * @packageDocumentation
  */
 
-import { BuchReadService } from '../service/buch-read.service.js';
+import { BuchReadService } from '../service/flugzeug-read.service.js';
 import { type Request } from 'express';
 import { nodeConfig } from '../../config/node.js';
 

@@ -16,25 +16,16 @@
  */
 
 /**
- * Das Modul besteht aus der Klasse {@linkcode BuchReadService}.
+ * Das Modul besteht aus der Klasse {@linkcode FlugzeugReadService}.
  * @packageDocumentation
  */
-
-import { type BuchArt } from './../entity/buch.entity.js';
 
 /**
  * Typdefinition für `BuchReadService.find()`und `QueryBuilder.build()`
  */
 export interface Suchkriterien {
-    readonly isbn?: string;
-    readonly rating?: number;
-    readonly art?: BuchArt;
     readonly preis?: number;
-    readonly rabatt?: number;
-    readonly lieferbar?: boolean;
-    readonly datum?: string;
-    readonly homepage?: string;
-    readonly javascript?: string;
-    readonly typescript?: string;
-    readonly titel?: string;
+    readonly eimsatzbereit?: boolean;
+    readonly baujahr?: string;
+    readonly modell?: string;
 }

@@ -30,7 +30,7 @@ import {
 } from './exceptions.js';
 import { Abbildung } from '../entity/abbildung.entity.js';
 import { Buch } from '../entity/buch.entity.js';
-import { BuchReadService } from './buch-read.service.js';
+import { BuchReadService } from './flugzeug-read.service.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from '../../mail/mail.service.js';
 import { Titel } from '../entity/titel.entity.js';
