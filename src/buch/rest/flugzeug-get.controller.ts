@@ -32,7 +32,6 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-import { type Buch, type BuchArt } from '../entity/buch.entity.js';
 import {
     Controller,
     Get,
@@ -45,16 +44,18 @@ import {
     Res,
     UseInterceptors,
 } from '@nestjs/common';
+
 import { Request, Response } from 'express';
-import { BuchReadService } from '../service/buch-read.service.js';
+import { BuchReadService } from '../service/flugzeug-read.service.js';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { Flugzeug } from '../entity/flugzeug.entity.js';
+import { type Modell } from '../entity/modell.entity.js';
 import { Public } from 'nest-keycloak-connect';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { type Suchkriterien } from '../service/suchkriterien.js';
-import { type Titel } from '../entity/titel.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
-
 /** href-Link für HATEOAS */
 export interface Link {
     /** href-Link für HATEOAS-Links */
@@ -76,23 +77,23 @@ export interface Links {
 }
 
 /** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Buch */
-export type TitelModel = Omit<Titel, 'buch' | 'id'>;
+export type ModellModel = Omit<Modell, 'flugzeug' | 'id'>;
 
 /** Buch-Objekt mit HATEOAS-Links */
-export type BuchModel = Omit<
-    Buch,
-    'abbildungen' | 'aktualisiert' | 'erzeugt' | 'id' | 'titel' | 'version'
+export type FlugzeugModel = Omit<
+    Flugzeug,
+    'sitzplaetze' | 'aktualisiert' | 'erzeugt' | 'id' | 'modell' | 'version'
 > & {
-    titel: TitelModel;
+    modell: ModellModel;
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _links: Links;
 };
 
 /** Buch-Objekte mit HATEOAS-Links in einem JSON-Array. */
-export interface BuecherModel {
+export interface FlugzeugeModel {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _embedded: {
-        buecher: BuchModel[];
+        flugzeuge: FlugzeugModel[];
     };
 }
 
@@ -106,39 +107,18 @@ export interface BuecherModel {
  * Außerdem muss noch `string` statt `Date` verwendet werden, weil es in OpenAPI
  * den Typ Date nicht gibt.
  */
-export class BuchQuery implements Suchkriterien {
-    @ApiProperty({ required: false })
-    declare readonly isbn: string;
-
-    @ApiProperty({ required: false })
-    declare readonly rating: number;
-
-    @ApiProperty({ required: false })
-    declare readonly art: BuchArt;
-
+export class FlugzeugQuery implements Suchkriterien {
     @ApiProperty({ required: false })
     declare readonly preis: number;
 
     @ApiProperty({ required: false })
-    declare readonly rabatt: number;
+    declare readonly einsatzbereit: boolean;
 
     @ApiProperty({ required: false })
-    declare readonly lieferbar: boolean;
+    declare readonly baujahr: string;
 
     @ApiProperty({ required: false })
-    declare readonly datum: string;
-
-    @ApiProperty({ required: false })
-    declare readonly homepage: string;
-
-    @ApiProperty({ required: false })
-    declare readonly javascript: string;
-
-    @ApiProperty({ required: false })
-    declare readonly typescript: string;
-
-    @ApiProperty({ required: false })
-    declare readonly titel: string;
+    declare readonly modell: string;
 }
 
 const APPLICATION_HAL_JSON = 'application/hal+json';
@@ -151,7 +131,7 @@ const APPLICATION_HAL_JSON = 'application/hal+json';
 // https://github.com/tc39/proposal-decorators
 @Controller(paths.rest)
 @UseInterceptors(ResponseTimeInterceptor)
-@ApiTags('Buch REST-API')
+@ApiTags('Flugzeug REST-API')
 // @ApiBearerAuth()
 // Klassen ab ES 2015
 export class BuchGetController {
@@ -191,7 +171,7 @@ export class BuchGetController {
     // eslint-disable-next-line max-params
     @Get(':id')
     @Public()
-    @ApiOperation({ summary: 'Suche mit der Buch-ID' })
+    @ApiOperation({ summary: 'Suche mit der Flugzeug-ID' })
     @ApiParam({
         name: 'id',
         description: 'Z.B. 1',
@@ -201,18 +181,18 @@ export class BuchGetController {
         description: 'Header für bedingte GET-Requests, z.B. "0"',
         required: false,
     })
-    @ApiOkResponse({ description: 'Das Buch wurde gefunden' })
-    @ApiNotFoundResponse({ description: 'Kein Buch zur ID gefunden' })
+    @ApiOkResponse({ description: 'Das Flugzeug wurde gefunden' })
+    @ApiNotFoundResponse({ description: 'Kein Flugzeug zur ID gefunden' })
     @ApiResponse({
         status: HttpStatus.NOT_MODIFIED,
-        description: 'Das Buch wurde bereits heruntergeladen',
+        description: 'Das Flugzeug wurde bereits heruntergeladen',
     })
     async getById(
         @Param('id') idStr: string,
         @Req() req: Request,
         @Headers('If-None-Match') version: string | undefined,
         @Res() res: Response,
-    ): Promise<Response<BuchModel | undefined>> {
+    ): Promise<Response<FlugzeugModel | undefined>> {
         this.#logger.debug('getById: idStr=%s, version=%s', idStr, version);
         const id = Number(idStr);
         if (!Number.isInteger(id)) {
@@ -225,14 +205,14 @@ export class BuchGetController {
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        const buch = await this.#service.findById({ id });
+        const flugzeug = await this.#service.findById({ id });
         if (this.#logger.isLevelEnabled('debug')) {
-            this.#logger.debug('getById(): buch=%s', buch.toString());
-            this.#logger.debug('getById(): titel=%o', buch.titel);
+            this.#logger.debug('getById(): flugzeug=%s', flugzeug.toString());
+            this.#logger.debug('getById(): modell=%o', flugzeug.modell);
         }
 
         // ETags
-        const versionDb = buch.version;
+        const versionDb = flugzeug.version;
         if (version === `"${versionDb}"`) {
             this.#logger.debug('getById: NOT_MODIFIED');
             return res.sendStatus(HttpStatus.NOT_MODIFIED);
@@ -241,9 +221,9 @@ export class BuchGetController {
         res.header('ETag', `"${versionDb}"`);
 
         // HATEOAS mit Atom Links und HAL (= Hypertext Application Language)
-        const buchModel = this.#toModel(buch, req);
-        this.#logger.debug('getById: buchModel=%o', buchModel);
-        return res.contentType(APPLICATION_HAL_JSON).json(buchModel);
+        const flugzeugModel = this.#toModel(flugzeug, req);
+        this.#logger.debug('getById: flugzeugModel=%o', flugzeugModel);
+        return res.contentType(APPLICATION_HAL_JSON).json(flugzeugModel);
     }
 
     /**
@@ -267,10 +247,10 @@ export class BuchGetController {
     @ApiOperation({ summary: 'Suche mit Suchkriterien' })
     @ApiOkResponse({ description: 'Eine evtl. leere Liste mit Büchern' })
     async get(
-        @Query() query: BuchQuery,
+        @Query() query: FlugzeugQuery,
         @Req() req: Request,
         @Res() res: Response,
-    ): Promise<Response<BuecherModel | undefined>> {
+    ): Promise<Response<FlugzeugeModel | undefined>> {
         this.#logger.debug('get: query=%o', query);
 
         if (req.accepts([APPLICATION_HAL_JSON, 'json', 'html']) === false) {
@@ -282,19 +262,20 @@ export class BuchGetController {
         this.#logger.debug('get: %o', buecher);
 
         // HATEOAS: Atom Links je Buch
-        const buecherModel = buecher.map((buch) =>
-            this.#toModel(buch, req, false),
+        const flugzeugeModel = buecher.map((flugzeug) =>
+            this.#toModel(flugzeug, req, false),
         );
-        this.#logger.debug('get: buecherModel=%o', buecherModel);
+        this.#logger.debug('get: buecherModel=%o', flugzeugeModel);
 
-        const result: BuecherModel = { _embedded: { buecher: buecherModel } };
+        // eslint-disable-next-line prettier/prettier
+        const result: FlugzeugeModel = { _embedded: { flugzeuge: flugzeugeModel } };
         return res.contentType(APPLICATION_HAL_JSON).json(result).send();
     }
 
-    #toModel(buch: Buch, req: Request, all = true) {
+    #toModel(flugzeug: Flugzeug, req: Request, all = true) {
         const baseUri = getBaseUri(req);
         this.#logger.debug('#toModel: baseUri=%s', baseUri);
-        const { id } = buch;
+        const { id } = flugzeug;
         const links = all
             ? {
                   self: { href: `${baseUri}/${id}` },
@@ -305,26 +286,19 @@ export class BuchGetController {
               }
             : { self: { href: `${baseUri}/${id}` } };
 
-        this.#logger.debug('#toModel: buch=%o, links=%o', buch, links);
-        const titelModel: TitelModel = {
-            titel: buch.titel?.titel ?? 'N/A',
-            untertitel: buch.titel?.untertitel ?? 'N/A',
+        this.#logger.debug('#toModel: buch=%o, links=%o', flugzeug, links);
+        const modellModel: ModellModel = {
+            modell: flugzeug.modell?.modell ?? 'N/A',
         };
-        const buchModel: BuchModel = {
-            isbn: buch.isbn,
-            rating: buch.rating,
-            art: buch.art,
-            preis: buch.preis,
-            rabatt: buch.rabatt,
-            lieferbar: buch.lieferbar,
-            datum: buch.datum,
-            homepage: buch.homepage,
-            schlagwoerter: buch.schlagwoerter,
-            titel: titelModel,
+        const flugzeugModel: FlugzeugModel = {
+            preis: flugzeug.preis,
+            einsatzbereit: flugzeug.einsatzbereit,
+            baujahr: flugzeug.baujahr,
+            modell: modellModel,
             _links: links,
         };
 
-        return buchModel;
+        return flugzeugModel;
     }
 }
 /* eslint-enable max-lines */

@@ -21,7 +21,7 @@
  */
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Buch } from './../entity/buch.entity.js';
+import { Flugzeug } from '../entity/flugzeug.entity.js';
 import { QueryBuilder } from './query-builder.js';
 import { type Suchkriterien } from './suchkriterien.js';
 import { getLogger } from '../../logger/logger.js';
@@ -44,15 +44,15 @@ export interface FindByIdParams {
 export class BuchReadService {
     static readonly ID_PATTERN = /^[1-9]\d{0,10}$/u;
 
-    readonly #buchProps: string[];
+    readonly #flugzeugProps: string[];
 
     readonly #queryBuilder: QueryBuilder;
 
     readonly #logger = getLogger(BuchReadService.name);
 
     constructor(queryBuilder: QueryBuilder) {
-        const buchDummy = new Buch();
-        this.#buchProps = Object.getOwnPropertyNames(buchDummy);
+        const flugzeugDummy = new Flugzeug();
+        this.#flugzeugProps = Object.getOwnPropertyNames(flugzeugDummy);
         this.#queryBuilder = queryBuilder;
     }
 
@@ -82,30 +82,26 @@ export class BuchReadService {
         // https://typeorm.io/working-with-repository
         // Das Resultat ist undefined, falls kein Datensatz gefunden
         // Lesen: Keine Transaktion erforderlich
-        const buch = await this.#queryBuilder
+        const flugzeug = await this.#queryBuilder
             .buildId({ id, mitAbbildungen })
             .getOne();
-        if (buch === null) {
+        if (flugzeug === null) {
             throw new NotFoundException(`Es gibt kein Buch mit der ID ${id}.`);
         }
-        if (buch.schlagwoerter === null) {
-            buch.schlagwoerter = [];
-        }
-
         if (this.#logger.isLevelEnabled('debug')) {
             this.#logger.debug(
                 'findById: buch=%s, titel=%o',
-                buch.toString(),
-                buch.titel,
+                flugzeug.toString(),
+                flugzeug.modell,
             );
             if (mitAbbildungen) {
                 this.#logger.debug(
                     'findById: abbildungen=%o',
-                    buch.abbildungen,
+                    flugzeug.sitzplaetze,
                 );
             }
         }
-        return buch;
+        return flugzeug;
     }
 
     /**
@@ -134,20 +130,16 @@ export class BuchReadService {
         // QueryBuilder https://typeorm.io/select-query-builder
         // Das Resultat ist eine leere Liste, falls nichts gefunden
         // Lesen: Keine Transaktion erforderlich
-        const buecher = await this.#queryBuilder.build(suchkriterien).getMany();
-        if (buecher.length === 0) {
+        const flugzeuge = await this.#queryBuilder
+            .build(suchkriterien)
+            .getMany();
+        if (flugzeuge.length === 0) {
             this.#logger.debug('find: Keine Buecher gefunden');
             throw new NotFoundException(
                 `Keine Buecher gefunden: ${JSON.stringify(suchkriterien)}`,
             );
         }
-        buecher.forEach((buch) => {
-            if (buch.schlagwoerter === null) {
-                buch.schlagwoerter = [];
-            }
-        });
-        this.#logger.debug('find: buecher=%o', buecher);
-        return buecher;
+        return flugzeuge;
     }
 
     #checkKeys(keys: string[]) {
@@ -155,7 +147,7 @@ export class BuchReadService {
         let validKeys = true;
         keys.forEach((key) => {
             if (
-                !this.#buchProps.includes(key) &&
+                !this.#flugzeugProps.includes(key) &&
                 key !== 'javascript' &&
                 key !== 'typescript'
             ) {
