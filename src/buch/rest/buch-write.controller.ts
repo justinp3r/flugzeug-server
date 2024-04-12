@@ -48,7 +48,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { BuchDTO, BuchDtoOhneRef } from './buchDTO.entity.js';
+import { BuchDTO, BuchDtoOhneRef } from './flugzeugDTO.entity.js';
 import { Request, Response } from 'express';
 import { type Abbildung } from '../entity/abbildung.entity.js';
 import { type Buch } from '../entity/buch.entity.js';

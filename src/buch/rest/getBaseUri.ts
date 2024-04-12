@@ -20,7 +20,7 @@
  * @packageDocumentation
  */
 
-import { BuchReadService } from '../service/flugzeug-read.service.js';
+import { FlugzeugReadService } from '../service/flugzeug-read.service.js';
 import { type Request } from 'express';
 import { nodeConfig } from '../../config/node.js';
 
@@ -34,7 +34,7 @@ export const getBaseUri = ({ protocol, hostname, url }: Request) => {
     const indexLastSlash = basePath.lastIndexOf('/');
     if (indexLastSlash > 0) {
         const idStr = basePath.slice(indexLastSlash + 1);
-        if (BuchReadService.ID_PATTERN.test(idStr)) {
+        if (FlugzeugReadService.ID_PATTERN.test(idStr)) {
             basePath = basePath.slice(0, indexLastSlash);
         }
     }
