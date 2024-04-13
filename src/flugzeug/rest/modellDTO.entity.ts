@@ -21,21 +21,16 @@
  * @packageDocumentation
  */
 
-import { IsOptional, Matches, MaxLength } from 'class-validator';
+import { Matches, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * Entity-Klasse für Titel ohne TypeORM.
+ * Entity-Klasse für Modell ohne TypeORM.
  */
-export class TitelDTO {
+export class ModellDTO {
     @Matches('^\\w.*')
     @MaxLength(40)
-    @ApiProperty({ example: 'Der Titel', type: String })
-    readonly titel!: string;
-
-    @IsOptional()
-    @MaxLength(40)
-    @ApiProperty({ example: 'Der Untertitel', type: String })
-    readonly untertitel: string | undefined;
+    @ApiProperty({ example: 'Das Modell', type: String })
+    readonly modell!: string;
 }
 /* eslint-enable @typescript-eslint/no-magic-numbers */
