@@ -50,11 +50,11 @@ import {
 } from '@nestjs/common';
 import { FlugzeugDTO, FlugzeugDtoOhneRef } from './flugzeugDTO.entity.js';
 import { Request, Response } from 'express';
-import { type Abbildung } from '../entity/abbildung.entity.js';
 import { type Flugzeug } from '../entity/flugzeug.entity.js';
+import { type Modell } from '../entity/modell.entity.js';
+import { type Sitzplatz } from '../entity/sitzplatz.entity.js';
 import { FlugzeugWriteService } from '../service/flugzeug-write.service.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { type Modell } from '../entity/modell.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
@@ -132,7 +132,7 @@ export class FlugzeugWriteController {
      * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn das neue
      * Modell bereits existieren.
      *
-     * @param buchDTO Flugzeugdaten im Body des Request-Objekts.
+     * @param flugzeugDTO Flugzeugdaten im Body des Request-Objekts.
      * @param id Pfad-Paramater für die ID.
      * @param version Versionsnummer aus dem Header _If-Match_.
      * @param res Leeres Response-Objekt von Express.
