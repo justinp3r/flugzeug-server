@@ -46,9 +46,9 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { BuchReadService } from '../service/flugzeug-read.service.js';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Flugzeug } from '../entity/flugzeug.entity.js';
+import { FlugzeugReadService } from '../service/flugzeug-read.service.js';
 import { type Modell } from '../entity/modell.entity.js';
 import { Public } from 'nest-keycloak-connect';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
@@ -76,10 +76,10 @@ export interface Links {
     readonly remove?: Link;
 }
 
-/** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Buch */
+/** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Flugzeug */
 export type ModellModel = Omit<Modell, 'flugzeug' | 'id'>;
 
-/** Buch-Objekt mit HATEOAS-Links */
+/** Flugzeug-Objekt mit HATEOAS-Links */
 export type FlugzeugModel = Omit<
     Flugzeug,
     'sitzplaetze' | 'aktualisiert' | 'erzeugt' | 'id' | 'modell' | 'version'
@@ -89,7 +89,7 @@ export type FlugzeugModel = Omit<
     _links: Links;
 };
 
-/** Buch-Objekte mit HATEOAS-Links in einem JSON-Array. */
+/** Flugzeug-Objekte mit HATEOAS-Links in einem JSON-Array. */
 export interface FlugzeugeModel {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _embedded: {
@@ -98,9 +98,9 @@ export interface FlugzeugeModel {
 }
 
 /**
- * Klasse für `BuchGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
- * formulieren. `BuchController` hat dieselben Properties wie die Basisklasse
- * `Buch` - allerdings mit dem Unterschied, dass diese Properties beim Ableiten
+ * Klasse für `FlugzeugGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
+ * formulieren. `FlugzeugController` hat dieselben Properties wie die Basisklasse
+ * `Flugzeug` - allerdings mit dem Unterschied, dass diese Properties beim Ableiten
  * so überschrieben sind, dass sie auch nicht gesetzt bzw. undefined sein
  * dürfen, damit die Queries flexibel formuliert werden können. Deshalb ist auch
  * immer der zusätzliche Typ undefined erforderlich.
@@ -134,31 +134,31 @@ const APPLICATION_HAL_JSON = 'application/hal+json';
 @ApiTags('Flugzeug REST-API')
 // @ApiBearerAuth()
 // Klassen ab ES 2015
-export class BuchGetController {
+export class FlugzeugGetController {
     // readonly in TypeScript, vgl. C#
     // private ab ES 2019
-    readonly #service: BuchReadService;
+    readonly #service: FlugzeugReadService;
 
-    readonly #logger = getLogger(BuchGetController.name);
+    readonly #logger = getLogger(FlugzeugGetController.name);
 
     // Dependency Injection (DI) bzw. Constructor Injection
-    // constructor(private readonly service: BuchReadService) {}
+    // constructor(private readonly service: FlugzeugReadService) {}
     // https://github.com/tc39/proposal-type-annotations#omitted-typescript-specific-features-that-generate-code
-    constructor(service: BuchReadService) {
+    constructor(service: FlugzeugReadService) {
         this.#service = service;
     }
 
     /**
-     * Ein Buch wird asynchron anhand seiner ID als Pfadparameter gesucht.
+     * Ein Flugzeug wird asynchron anhand seiner ID als Pfadparameter gesucht.
      *
-     * Falls es ein solches Buch gibt und `If-None-Match` im Request-Header
-     * auf die aktuelle Version des Buches gesetzt war, wird der Statuscode
+     * Falls es ein solches Flugzeug gibt und `If-None-Match` im Request-Header
+     * auf die aktuelle Version des Flugzeuges gesetzt war, wird der Statuscode
      * `304` (`Not Modified`) zurückgeliefert. Falls `If-None-Match` nicht
      * gesetzt ist oder eine veraltete Version enthält, wird das gefundene
-     * Buch im Rumpf des Response als JSON-Datensatz mit Atom-Links für HATEOAS
+     * Flugzeug im Rumpf des Response als JSON-Datensatz mit Atom-Links für HATEOAS
      * und dem Statuscode `200` (`OK`) zurückgeliefert.
      *
-     * Falls es kein Buch zur angegebenen ID gibt, wird der Statuscode `404`
+     * Falls es kein Flugzeug zur angegebenen ID gibt, wird der Statuscode `404`
      * (`Not Found`) zurückgeliefert.
      *
      * @param idStr Pfad-Parameter `id`
@@ -197,7 +197,8 @@ export class BuchGetController {
         const id = Number(idStr);
         if (!Number.isInteger(id)) {
             this.#logger.debug('getById: not isInteger()');
-            throw new NotFoundException(`Die Buch-ID ${idStr} ist ungueltig.`);
+            // eslint-disable-next-line prettier/prettier
+            throw new NotFoundException(`Die Flugzeug-ID ${idStr} ist ungueltig.`);
         }
 
         if (req.accepts([APPLICATION_HAL_JSON, 'json', 'html']) === false) {
@@ -228,11 +229,11 @@ export class BuchGetController {
 
     /**
      * Bücher werden mit Query-Parametern asynchron gesucht. Falls es mindestens
-     * ein solches Buch gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
+     * ein solches Flugzeug gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
      * des Response ist das JSON-Array mit den gefundenen Büchern, die jeweils
      * um Atom-Links für HATEOAS ergänzt sind.
      *
-     * Falls es kein Buch zu den Suchkriterien gibt, wird der Statuscode `404`
+     * Falls es kein Flugzeug zu den Suchkriterien gibt, wird der Statuscode `404`
      * (`Not Found`) gesetzt.
      *
      * Falls es keine Query-Parameter gibt, werden alle Bücher ermittelt.
@@ -261,7 +262,7 @@ export class BuchGetController {
         const buecher = await this.#service.find(query);
         this.#logger.debug('get: %o', buecher);
 
-        // HATEOAS: Atom Links je Buch
+        // HATEOAS: Atom Links je Flugzeug
         const flugzeugeModel = buecher.map((flugzeug) =>
             this.#toModel(flugzeug, req, false),
         );
@@ -286,7 +287,7 @@ export class BuchGetController {
               }
             : { self: { href: `${baseUri}/${id}` } };
 
-        this.#logger.debug('#toModel: buch=%o, links=%o', flugzeug, links);
+        this.#logger.debug('#toModel: flugzeug=%o, links=%o', flugzeug, links);
         const modellModel: ModellModel = {
             modell: flugzeug.modell?.modell ?? 'N/A',
         };

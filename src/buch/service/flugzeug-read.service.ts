@@ -16,7 +16,7 @@
  */
 
 /**
- * Das Modul besteht aus der Klasse {@linkcode BuchReadService}.
+ * Das Modul besteht aus der Klasse {@linkcode FlugzeugReadService}.
  * @packageDocumentation
  */
 
@@ -30,25 +30,25 @@ import { getLogger } from '../../logger/logger.js';
  * Typdefinition für `findById`
  */
 export interface FindByIdParams {
-    /** ID des gesuchten Buchs */
+    /** ID des gesuchten Flugzeugs */
     readonly id: number;
-    /** Sollen die Abbildungen mitgeladen werden? */
-    readonly mitAbbildungen?: boolean;
+    /** Sollen die sitzplaetze mitgeladen werden? */
+    readonly mitSitzplaetze?: boolean;
 }
 
 /**
- * Die Klasse `BuchReadService` implementiert das Lesen für Bücher und greift
+ * Die Klasse `FlugzeugReadService` implementiert das Lesen für Bücher und greift
  * mit _TypeORM_ auf eine relationale DB zu.
  */
 @Injectable()
-export class BuchReadService {
+export class FlugzeugReadService {
     static readonly ID_PATTERN = /^[1-9]\d{0,10}$/u;
 
     readonly #flugzeugProps: string[];
 
     readonly #queryBuilder: QueryBuilder;
 
-    readonly #logger = getLogger(BuchReadService.name);
+    readonly #logger = getLogger(FlugzeugReadService.name);
 
     constructor(queryBuilder: QueryBuilder) {
         const flugzeugDummy = new Flugzeug();
@@ -69,32 +69,33 @@ export class BuchReadService {
     //              Im Promise-Objekt ist dann die Fehlerursache enthalten.
 
     /**
-     * Ein Buch asynchron anhand seiner ID suchen
-     * @param id ID des gesuchten Buches
-     * @returns Das gefundene Buch vom Typ [Buch](buch_entity_buch_entity.Buch.html)
+     * Ein Flugzeug asynchron anhand seiner ID suchen
+     * @param id ID des gesuchten Flugzeuges
+     * @returns Das gefundene Flugzeug vom Typ [Flugzeug](flugzeug_entity_flugzeug_entity.Flugzeug.html)
      *          in einem Promise aus ES2015.
-     * @throws NotFoundException falls kein Buch mit der ID existiert
+     * @throws NotFoundException falls kein Flugzeug mit der ID existiert
      */
     // https://2ality.com/2015/01/es6-destructuring.html#simulating-named-parameters-in-javascript
-    async findById({ id, mitAbbildungen = false }: FindByIdParams) {
+    async findById({ id, mitSitzplaetze = false }: FindByIdParams) {
         this.#logger.debug('findById: id=%d', id);
 
         // https://typeorm.io/working-with-repository
         // Das Resultat ist undefined, falls kein Datensatz gefunden
         // Lesen: Keine Transaktion erforderlich
         const flugzeug = await this.#queryBuilder
-            .buildId({ id, mitAbbildungen })
+            .buildId({ id, mitSitzplaetze })
             .getOne();
         if (flugzeug === null) {
-            throw new NotFoundException(`Es gibt kein Buch mit der ID ${id}.`);
+            // eslint-disable-next-line prettier/prettier
+            throw new NotFoundException(`Es gibt kein Flugzeug mit der ID ${id}.`);
         }
         if (this.#logger.isLevelEnabled('debug')) {
             this.#logger.debug(
-                'findById: buch=%s, titel=%o',
+                'findById: flugzeug=%s, titel=%o',
                 flugzeug.toString(),
                 flugzeug.modell,
             );
-            if (mitAbbildungen) {
+            if (mitSitzplaetze) {
                 this.#logger.debug(
                     'findById: abbildungen=%o',
                     flugzeug.sitzplaetze,
@@ -143,7 +144,7 @@ export class BuchReadService {
     }
 
     #checkKeys(keys: string[]) {
-        // Ist jedes Suchkriterium auch eine Property von Buch oder "schlagwoerter"?
+        // Ist jedes Suchkriterium auch eine Property von Flugzeug?
         let validKeys = true;
         keys.forEach((key) => {
             if (
