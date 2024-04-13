@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file, @typescript-eslint/no-magic-numbers */
+/* eslint-disable max-classes-per-file */
 /*
  * Copyright (C) 2016 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
  *
@@ -22,23 +22,16 @@
  */
 
 import {
-    ArrayUnique,
     IsArray,
     IsBoolean,
-    IsISBN,
     IsISO8601,
-    IsInt,
     IsOptional,
     IsPositive,
-    IsUrl,
-    Matches,
-    Max,
-    Min,
     ValidateNested,
 } from 'class-validator';
-import { SitzplatzDTO } from './sitzplatzDTO.entity.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { ModellDTO } from './modellDTO.entity.js';
+import { SitzplatzDTO } from './sitzplatzDTO.entity.js';
 import { Type } from 'class-transformer';
 
 export const MAX_RATING = 5;
@@ -78,4 +71,4 @@ export class FlugzeugDTO extends FlugzeugDtoOhneRef {
     @ApiProperty({ type: [SitzplatzDTO] })
     readonly sitzplaetze: SitzplatzDTO[] | undefined;
 }
-/* eslint-enable max-classes-per-file, @typescript-eslint/no-magic-numbers */
+/* eslint-enable max-classes-per-file */
