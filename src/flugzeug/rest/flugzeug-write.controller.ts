@@ -50,14 +50,15 @@ import {
 } from '@nestjs/common';
 import { FlugzeugDTO, FlugzeugDtoOhneRef } from './flugzeugDTO.entity.js';
 import { Request, Response } from 'express';
-import { type Flugzeug } from '../entity/flugzeug.entity.js';
-import { type Modell } from '../entity/modell.entity.js';
-import { type Sitzplatz } from '../entity/sitzplatz.entity.js';
 import { FlugzeugWriteService } from '../service/flugzeug-write.service.js';
-import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
+// eslint-disable-next-line sort-imports
+import { type Flugzeug } from '../entity/flugzeug.entity.js';
+import { type Modell } from '../entity/modell.entity.js';
+import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { type Sitzplatz } from '../entity/sitzplatz.entity.js';
 
 const MSG_FORBIDDEN = 'Kein Token mit ausreichender Berechtigung vorhanden';
 /**
@@ -184,7 +185,11 @@ export class FlugzeugWriteController {
         }
 
         const flugzeug = this.#flugzeugDtoOhneRefToFlugzeug(flugzeugDTO);
-        const neueVersion = await this.#service.update({ id, flugzeug, version });
+        const neueVersion = await this.#service.update({
+            id,
+            flugzeug,
+            version,
+        });
         this.#logger.debug('put: version=%d', neueVersion);
         return res.header('ETag', `"${neueVersion}"`).send();
     }
@@ -244,7 +249,7 @@ export class FlugzeugWriteController {
         return flugzeug;
     }
 
-    #flugzeugDtoOhneRefToFlugzeug(flugzeugDTO: flugzeugDtoOhneRef): Flugzeug {
+    #flugzeugDtoOhneRefToFlugzeug(flugzeugDTO: FlugzeugDtoOhneRef): Flugzeug {
         return {
             id: undefined,
             version: undefined,
