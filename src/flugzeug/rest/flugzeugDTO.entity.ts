@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file, @typescript-eslint/no-magic-numbers */
+/* eslint-disable max-classes-per-file */
 /*
  * Copyright (C) 2016 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
  *
@@ -22,24 +22,16 @@
  */
 
 import {
-    ArrayUnique,
     IsArray,
     IsBoolean,
-    IsISBN,
     IsISO8601,
-    IsInt,
     IsOptional,
     IsPositive,
-    IsUrl,
-    Matches,
-    Max,
-    Min,
     ValidateNested,
 } from 'class-validator';
-import { AbbildungDTO } from './abbildungDTO.entity.js';
 import { ApiProperty } from '@nestjs/swagger';
-import { type BuchArt } from '../entity/buch.entity.js';
-import { TitelDTO } from './titelDTO.entity.js';
+import { ModellDTO } from './modellDTO.entity.js';
+import { SitzplatzDTO } from './sitzplatzDTO.entity.js';
 import { Type } from 'class-transformer';
 
 export const MAX_RATING = 5;
@@ -47,70 +39,36 @@ export const MAX_RATING = 5;
 /**
  * Entity-Klasse für Bücher ohne TypeORM und ohne Referenzen.
  */
-export class BuchDtoOhneRef {
-    // https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s13.html
-    @IsISBN(13)
-    @ApiProperty({ example: '978-0-007-00644-1', type: String })
-    readonly isbn!: string;
-
-    @IsInt()
-    @Min(0)
-    @Max(MAX_RATING)
-    @ApiProperty({ example: 5, type: Number })
-    readonly rating: number | undefined;
-
-    @Matches(/^DRUCKAUSGABE$|^KINDLE$/u)
-    @IsOptional()
-    @ApiProperty({ example: 'DRUCKAUSGABE', type: String })
-    readonly art: BuchArt | undefined;
-
+export class FlugzeugDtoOhneRef {
     @IsPositive()
     @ApiProperty({ example: 1, type: Number })
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
     readonly preis!: number;
 
-    @Min(0)
-    @Max(1)
-    @IsOptional()
-    @ApiProperty({ example: 0.1, type: Number })
-    readonly rabatt: number | undefined;
-
     @IsBoolean()
     @ApiProperty({ example: true, type: Boolean })
-    readonly lieferbar: boolean | undefined;
+    readonly einsatzbereit: boolean | undefined;
 
     @IsISO8601({ strict: true })
     @IsOptional()
     @ApiProperty({ example: '2021-01-31' })
-    readonly datum: Date | string | undefined;
-
-    @IsUrl()
-    @IsOptional()
-    @ApiProperty({ example: 'https://test.de/', type: String })
-    readonly homepage: string | undefined;
-
-    @IsOptional()
-    @ArrayUnique()
-    @ApiProperty({ example: ['JAVASCRIPT', 'TYPESCRIPT'] })
-    readonly schlagwoerter: string[] | undefined;
+    readonly baujahr: Date | string | undefined;
 }
 
 /**
  * Entity-Klasse für Bücher ohne TypeORM.
  */
-export class BuchDTO extends BuchDtoOhneRef {
+export class FlugzeugDTO extends FlugzeugDtoOhneRef {
     @ValidateNested()
-    @Type(() => TitelDTO)
-    @ApiProperty({ type: TitelDTO })
-    readonly titel!: TitelDTO; // NOSONAR
+    @Type(() => ModellDTO)
+    @ApiProperty({ type: ModellDTO })
+    readonly modell!: ModellDTO; // NOSONAR
 
     @IsOptional()
     @IsArray()
     @ValidateNested({ each: true })
-    @Type(() => AbbildungDTO)
-    @ApiProperty({ type: [AbbildungDTO] })
-    readonly abbildungen: AbbildungDTO[] | undefined;
-
-    // AbbildungDTO
+    @Type(() => SitzplatzDTO)
+    @ApiProperty({ type: [SitzplatzDTO] })
+    readonly sitzplaetze: SitzplatzDTO[] | undefined;
 }
-/* eslint-enable max-classes-per-file, @typescript-eslint/no-magic-numbers */
+/* eslint-enable max-classes-per-file */
