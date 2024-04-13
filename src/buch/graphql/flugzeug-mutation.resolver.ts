@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /*
  * Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
  *
@@ -19,14 +20,14 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthGuard, Roles } from 'nest-keycloak-connect';
 import { IsInt, IsNumberString, Min } from 'class-validator';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { type Abbildung } from '../entity/abbildung.entity.js';
-import { type Buch } from '../entity/buch.entity.js';
-import { BuchDTO } from '../rest/flugzeugDTO.entity.js';
-import { BuchWriteService } from '../service/buch-write.service.js';
+import { type Sitzplatz } from '../entity/sitzplatz.entity.js';
+import { type Flugzeug } from '../entity/flugzeug.entity.js';
+import { FlugzeugDTO } from '../rest/flugzeugDTO.entity.js';
+import { FlugzeugWriteService } from '../service/flugzeug-write.service.js';
 import { HttpExceptionFilter } from './http-exception.filter.js';
-import { type IdInput } from './buch-query.resolver.js';
+import { type IdInput } from './flugzeug-query.resolver.js';
+import { type Modell } from '../entity/modell.entity.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { type Titel } from '../entity/titel.entity.js';
 import { getLogger } from '../../logger/logger.js';
 
 // Authentifizierung und Autorisierung durch
@@ -47,7 +48,7 @@ export interface UpdatePayload {
     readonly version: number;
 }
 
-export class BuchUpdateDTO extends BuchDTO {
+export class FlugzeugUpdateDTO extends FlugzeugDTO {
     @IsNumberString()
     readonly id!: string;
 
@@ -60,43 +61,43 @@ export class BuchUpdateDTO extends BuchDTO {
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
 @UseInterceptors(ResponseTimeInterceptor)
-export class BuchMutationResolver {
-    readonly #service: BuchWriteService;
+export class FlugzeugMutationResolver {
+    readonly #service: FlugzeugWriteService;
 
-    readonly #logger = getLogger(BuchMutationResolver.name);
+    readonly #logger = getLogger(FlugzeugMutationResolver.name);
 
-    constructor(service: BuchWriteService) {
+    constructor(service: FlugzeugWriteService) {
         this.#service = service;
     }
 
     @Mutation()
     @Roles({ roles: ['admin', 'user'] })
-    async create(@Args('input') buchDTO: BuchDTO) {
-        this.#logger.debug('create: buchDTO=%o', buchDTO);
+    async create(@Args('input') flugzeugDTO: FlugzeugDTO) {
+        this.#logger.debug('create: FlugzeugDTO=%o', flugzeugDTO);
 
-        const buch = this.#buchDtoToBuch(buchDTO);
-        const id = await this.#service.create(buch);
+        const flugzeug = this.#flugzeugDtoToFlugzeug(flugzeugDTO);
+        const id = await this.#service.create(flugzeug);
         // TODO BadUserInputError
-        this.#logger.debug('createBuch: id=%d', id);
+        this.#logger.debug('createFlugzeug: id=%d', id);
         const payload: CreatePayload = { id };
         return payload;
     }
 
     @Mutation()
     @Roles({ roles: ['admin', 'user'] })
-    async update(@Args('input') buchDTO: BuchUpdateDTO) {
-        this.#logger.debug('update: buch=%o', buchDTO);
+    async update(@Args('input') flugzeugDTO: FlugzeugUpdateDTO) {
+        this.#logger.debug('update: flugzeug=%o', flugzeugDTO);
 
-        const buch = this.#buchUpdateDtoToBuch(buchDTO);
-        const versionStr = `"${buchDTO.version.toString()}"`;
+        const flugzeug = this.#flugzeugUpdateDtoToFlugzeug(flugzeugDTO);
+        const versionStr = `"${flugzeugDTO.version.toString()}"`;
 
         const versionResult = await this.#service.update({
-            id: Number.parseInt(buchDTO.id, 10),
-            buch,
+            id: Number.parseInt(flugzeugDTO.id, 10),
+            flugzeug,
             version: versionStr,
         });
         // TODO BadUserInputError
-        this.#logger.debug('updateBuch: versionResult=%d', versionResult);
+        this.#logger.debug('updateFlugzeug: versionResult=%d', versionResult);
         const payload: UpdatePayload = { version: versionResult };
         return payload;
     }
@@ -107,71 +108,58 @@ export class BuchMutationResolver {
         const idStr = id.id;
         this.#logger.debug('delete: id=%s', idStr);
         const deletePerformed = await this.#service.delete(idStr);
-        this.#logger.debug('deleteBuch: deletePerformed=%s', deletePerformed);
+        // eslint-disable-next-line prettier/prettier
+        this.#logger.debug('deleteFlugzeug: deletePerformed=%s', deletePerformed);
         return deletePerformed;
     }
 
-    #buchDtoToBuch(buchDTO: BuchDTO): Buch {
-        const titelDTO = buchDTO.titel;
-        const titel: Titel = {
+    #flugzeugDtoToFlugzeug(flugzeugDTO: FlugzeugDTO): Flugzeug {
+        const modellDTO = flugzeugDTO.modell;
+        const modell: Modell = {
             id: undefined,
-            titel: titelDTO.titel,
-            untertitel: titelDTO.untertitel,
-            buch: undefined,
+            modell: modellDTO.modell,
+            flugzeug: undefined,
         };
-        const abbildungen = buchDTO.abbildungen?.map((abbildungDTO) => {
-            const abbildung: Abbildung = {
+        const sitzplaetze = flugzeugDTO.sitzplaetze?.map((sitzplatzDTO) => {
+            const abbildung: Sitzplatz = {
                 id: undefined,
-                beschriftung: abbildungDTO.beschriftung,
-                contentType: abbildungDTO.contentType,
-                buch: undefined,
+                sitzplatzklasse: sitzplatzDTO.sitzplatzklasse,
+                flugzeug: undefined,
             };
             return abbildung;
         });
-        const buch: Buch = {
+        const flugzeug: Flugzeug = {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel,
-            abbildungen,
+            preis: flugzeugDTO.preis,
+            einsatzbereit: flugzeugDTO.einsatzbereit,
+            baujahr: flugzeugDTO.baujahr,
+            modell,
+            sitzplaetze,
             erzeugt: new Date(),
             aktualisiert: new Date(),
         };
 
         // Rueckwaertsverweis
-        buch.titel!.buch = buch;
-        return buch;
+        flugzeug.modell!.flugzeug = flugzeug;
+        return flugzeug;
     }
 
-    #buchUpdateDtoToBuch(buchDTO: BuchUpdateDTO): Buch {
+    #flugzeugUpdateDtoToFlugzeug(flugzeugDTO: FlugzeugUpdateDTO): Flugzeug {
         return {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel: undefined,
-            abbildungen: undefined,
+            preis: flugzeugDTO.preis,
+            einsatzbereit: flugzeugDTO.einsatzbereit,
+            baujahr: flugzeugDTO.baujahr,
+            modell: undefined,
+            sitzplaetze: undefined,
             erzeugt: undefined,
             aktualisiert: new Date(),
         };
     }
 
-    // #errorMsgCreateBuch(err: CreateError) {
+    // #errorMsgCreateFlugzeug(err: CreateError) {
     //     switch (err.type) {
     //         case 'IsbnExists': {
     //             return `Die ISBN ${err.isbn} existiert bereits`;
@@ -182,10 +170,10 @@ export class BuchMutationResolver {
     //     }
     // }
 
-    // #errorMsgUpdateBuch(err: UpdateError) {
+    // #errorMsgUpdateFlugzeug(err: UpdateError) {
     //     switch (err.type) {
-    //         case 'BuchNotExists': {
-    //             return `Es gibt kein Buch mit der ID ${err.id}`;
+    //         case 'FlugzeugNotExists': {
+    //             return `Es gibt kein Flugzeug mit der ID ${err.id}`;
     //         }
     //         case 'VersionInvalid': {
     //             return `"${err.version}" ist keine gueltige Versionsnummer`;
