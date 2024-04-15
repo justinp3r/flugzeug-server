@@ -20,25 +20,25 @@
  * @packageDocumentation
  */
 
-import { Abbildung } from '../entity/abbildung.entity.js';
 import { Flugzeug } from '../entity/flugzeug.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Modell } from '../entity/modell.entity.js';
 import { Repository } from 'typeorm';
+import { Sitzplatz } from '../entity/sitzplatz.entity.js';
 import { type Suchkriterien } from './suchkriterien.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/typeormOptions.js';
 
-/** Typdefinitionen für die Suche mit der Buch-ID. */
+/** Typdefinitionen für die Suche mit der Flugzeug-ID. */
 export interface BuildIdParams {
-    /** ID des gesuchten Buchs. */
+    /** ID des gesuchten Flugzeuges. */
     readonly id: number;
     /** Sollen die Abbildungen mitgeladen werden? */
-    readonly mitAbbildungen?: boolean;
+    readonly mitSitzplaetze?: boolean;
 }
 /**
- * Die Klasse `QueryBuilder` implementiert das Lesen für Bücher und greift
+ * Die Klasse `QueryBuilder` implementiert das Lesen für Flugzeuge und greift
  * mit _TypeORM_ auf eine relationale DB zu.
  */
 @Injectable()
@@ -51,9 +51,9 @@ export class QueryBuilder {
         .charAt(0)
         .toLowerCase()}${Modell.name.slice(1)}`;
 
-    readonly #abbildungAlias = `${Abbildung.name
+    readonly #abbildungAlias = `${Sitzplatz.name
         .charAt(0)
-        .toLowerCase()}${Abbildung.name.slice(1)}`;
+        .toLowerCase()}${Sitzplatz.name.slice(1)}`;
 
     readonly #repo: Repository<Flugzeug>;
 
@@ -64,22 +64,22 @@ export class QueryBuilder {
     }
 
     /**
-     * Ein Buch mit der ID suchen.
-     * @param id ID des gesuchten Buches
+     * Ein Flugzeug mit der ID suchen.
+     * @param id ID des gesuchten Flugzeuges
      * @returns QueryBuilder
      */
-    buildId({ id, mitAbbildungen = false }: BuildIdParams) {
-        // QueryBuilder "buch" fuer Repository<Buch>
+    buildId({ id, mitSitzplaetze = false }: BuildIdParams) {
+        // QueryBuilder "flugzeug" fuer Repository<Flugzeug>
         const queryBuilder = this.#repo.createQueryBuilder(this.#flugzeugAlias);
 
-        // Fetch-Join: aus QueryBuilder "buch" die Property "titel" ->  Tabelle "titel"
+        // Fetch-Join: aus QueryBuilder "flugzeug" die Property "titel" ->  Tabelle "titel"
         queryBuilder.innerJoinAndSelect(
             `${this.#flugzeugAlias}.titel`,
             this.#modellAlias,
         );
 
-        if (mitAbbildungen) {
-            // Fetch-Join: aus QueryBuilder "buch" die Property "abbildungen" -> Tabelle "abbildung"
+        if (mitSitzplaetze) {
+            // Fetch-Join: aus QueryBuilder "flugzeug" die Property "abbildungen" -> Tabelle "abbildung"
             queryBuilder.leftJoinAndSelect(
                 `${this.#flugzeugAlias}.abbildungen`,
                 this.#abbildungAlias,

@@ -22,16 +22,16 @@ schema {
 
 "Funktionen, um Bücherdaten zu lesen"
 type Query {
-  buecher(suchkriterien: SuchkriterienInput): [Buch!]
+  buecher(suchkriterien: SuchkriterienInput): [Flugzeug!]
 
-  buch(id: ID!): Buch
+  flugzeug(id: ID!): Flugzeug
 }
 
 "Funktionen, um Bücher neu anzulegen, zu aktualisieren oder zu löschen"
 type Mutation {
-  create(input: BuchInput!): CreatePayload
+  create(input: FlugzeugInput!): CreatePayload
 
-  update(input: BuchUpdateInput!): UpdatePayload
+  update(input: FlugzeugUpdateInput!): UpdatePayload
 
   delete(id: ID!): Boolean
 
@@ -40,96 +40,64 @@ type Mutation {
   refresh(refresh_token: String!): LoginResult
 }
 
-"Daten zum Titel eines Buches"
-type Titel {
-  titel: String!
-  untertitel: String
+"Daten zum Titel eines Flugzeuges"
+type Modell {
+  modell: String!
 }
 
-"Daten zum Titel eines Buches"
-type Abbildung {
-  beschriftung: String!
-  contentType: String
+"Daten zum Titel eines Flugzeuges"
+type Sitzplatz {
+  sitzplatzklasse: String!
 }
 
-"Datenschema zu einem Buch, das gelesen wird"
-type Buch {
+"Datenschema zu einem Flugzeug, das gelesen wird"
+type Flugzeug {
   # ID ist bei Apollo ein String
   id: Int!
   version: Int!
-  isbn: String!
-  rating: Int
-  art: Art
   preis: Float!
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
+  einsatzbereit: Boolean
+  baujahr: String
   # 1:1-Beziehung
-  titel: Titel!
-  # field mit @ResolveField
-  rabatt(short: Boolean): String!
-}
-
-"Enum-Typ für die Art eines Buches"
-enum Art {
-  DRUCKAUSGABE
-  KINDLE
+  modell: Titel!
 }
 
 "Suchkriterien für Bücher"
 input SuchkriterienInput {
-  titel: String
-  isbn: String
-  rating: Int
-  art: Art
-  lieferbar: Boolean
+  modell: String
+  einsatzbereit: Boolean
 }
 
-"Daten zum Titel eines neuen Buches"
-input TitelInput {
-  titel: String!
-  untertitel: String
+"Daten zum Titel eines neuen Flugzeuges"
+input ModellInput {
+  modell: String!
 }
 
-"Daten zu den Abbildungen eines Buches"
-input AbbildungInput {
-  beschriftung: String!
-  contentType: String!
+"Daten zu den Abbildungen eines Flugzeuges"
+input SitzplatzInput {
+  sitzplatzklasse: String!
 }
 
-"Daten für ein neues Buch"
-input BuchInput {
-  isbn: String
-  rating: Int
-  art: Art
+"Daten für ein neues Flugzeug"
+input FlugzeugInput {
   preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
-  titel: TitelInput!
-  abbildungen: [AbbildungInput!]
+  einsatzbereit: Boolean
+  baujahr: String
+  modell: TitelInput!
+  sitzplaetze: [SitzplatzInput!]
 }
 
 type CreatePayload {
   id: Int
 }
 
-"Daten für ein zu änderndes Buch"
-input BuchUpdateInput {
+"Daten für ein zu änderndes Flugzeug"
+input FlugzeugUpdateInput {
   id: ID
   version: Int
-  isbn: String
-  rating: Int
-  art: Art
   preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
+  einsatzbereit: Boolean
+  baujahr: String
 }
 
 type UpdatePayload {

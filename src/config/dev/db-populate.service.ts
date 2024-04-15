@@ -43,7 +43,7 @@ import { resolve } from 'node:path';
  */
 @Injectable()
 export class DbPopulateService implements OnApplicationBootstrap {
-    readonly #tabellen = ['buch', 'titel', 'abbildung'];
+    readonly #tabellen = ['flugzeug', 'modell', 'sitzplatz'];
 
     readonly #datasource: DataSource;
 
@@ -55,21 +55,15 @@ export class DbPopulateService implements OnApplicationBootstrap {
     // https://docs.oracle.com/en/database/oracle/oracle-database/23/admin/managing-tables.html#GUID-2A801016-0399-4925-AD1B-A02683E81B59
     // https://docs.oracle.com/en/database/oracle/oracle-database/23/sutil/using-oracle-external-tables-examples.html
     // https://docs.oracle.com/en/database/oracle/oracle-database/23/sutil/oracle-sql-loader-commands.html
-    readonly #oracleInsertBuch = `
-        INSERT INTO buch(id,version,isbn,rating,art,preis,rabatt,lieferbar,datum,homepage,schlagwoerter,erzeugt,aktualisiert)
-        SELECT id,version,isbn,rating,art,preis,rabatt,lieferbar,datum,homepage,schlagwoerter,erzeugt,aktualisiert
+    readonly #oracleInsertFlugzeug = `
+        INSERT INTO flugzeug(id,version,preis,einsatzbereit,baujahr,erzeugt,aktualisiert)
+        SELECT id,version,preis,einsatzbereit,baujahr,erzeugt,aktualisiert
         FROM   EXTERNAL (
             (id            NUMBER(10,0),
             version       NUMBER(3,0),
-            isbn          VARCHAR2(17),
-            rating        NUMBER(1,0),
-            art           VARCHAR2(12),
             preis         NUMBER(8,2),
-            rabatt        NUMBER(4,3),
-            lieferbar     NUMBER(1,0),
-            datum         DATE,
-            homepage      VARCHAR2(40),
-            schlagwoerter VARCHAR2(64),
+            einsatzbereit     NUMBER(1,0),
+            baujahr         DATE,
             erzeugt       TIMESTAMP,
             aktualisiert  TIMESTAMP)
             TYPE ORACLE_LOADER
@@ -78,51 +72,48 @@ export class DbPopulateService implements OnApplicationBootstrap {
                 RECORDS DELIMITED BY NEWLINE
                 SKIP 1
                 FIELDS TERMINATED BY ';'
-                (id,version,isbn,rating,art,preis,rabatt,lieferbar,
-                 datum DATE 'YYYY-MM-DD',
-                 homepage,schlagwoerter,
+                (id,version,preis,einsatzbereit,
+                 baujahr DATE 'YYYY-MM-DD',
                  erzeugt CHAR(19) date_format TIMESTAMP mask 'YYYY-MM-DD HH24:MI:SS',
                  aktualisiert CHAR(19) date_format TIMESTAMP mask 'YYYY-MM-DD HH24:MI:SS')
             )
-            LOCATION ('buch.csv')
+            LOCATION ('flugzeug.csv')
             REJECT LIMIT UNLIMITED
-        ) buch_external
+        ) flugzeug_external
     `;
 
-    readonly #oracleInsertTitel = `
-        INSERT INTO titel(id,titel,untertitel,buch_id)
-        SELECT id,titel,untertitel,buch_id
+    readonly #oracleInsertModell = `
+        INSERT INTO modell(id,modell,flugzeug_id)
+        SELECT id,modell,flugzeug_id
         FROM   EXTERNAL (
             (id         NUMBER(10,0),
-            titel       VARCHAR2(40),
-            untertitel  VARCHAR2(40),
-            buch_id     NUMBER(10,0))
+            modell       VARCHAR2(40),
+            flugzeug_id     NUMBER(10,0))
             TYPE ORACLE_LOADER
             DEFAULT DIRECTORY csv_dir
             ACCESS PARAMETERS (
                 RECORDS DELIMITED BY NEWLINE
                 SKIP 1
                 FIELDS TERMINATED BY ';')
-            LOCATION ('titel.csv')
+            LOCATION ('modell.csv')
             REJECT LIMIT UNLIMITED
-        ) titel_external
+        ) modell_external
     `;
 
-    readonly #oracleInsertAbbildung = `
-        INSERT INTO abbildung(id,beschriftung,content_type,buch_id)
-        SELECT id,beschriftung,content_type,buch_id
+    readonly #oracleInsertSitzplatz = `
+        INSERT INTO sitzplatz(id,sitzplatzklasse,flugzeug_id)
+        SELECT id,sitzplatzklasse,flugzeug_id
         FROM   EXTERNAL (
             (id         NUMBER(10,0),
-            beschriftung VARCHAR2(32),
-            content_type VARCHAR2(16),
-            buch_id     NUMBER(10,0))
+            sitzplatzklasse VARCHAR2(32),
+            flugzeug_id     NUMBER(10,0))
             TYPE ORACLE_LOADER
             DEFAULT DIRECTORY csv_dir
             ACCESS PARAMETERS (
                 RECORDS DELIMITED BY NEWLINE
                 SKIP 1
                 FIELDS TERMINATED BY ';')
-            LOCATION ('abbildung.csv')
+            LOCATION ('sitzplatz.csv')
             REJECT LIMIT UNLIMITED
         ) abbildung_external
     `;
@@ -240,9 +231,9 @@ export class DbPopulateService implements OnApplicationBootstrap {
         this.#logger.debug('createScript = %s', createScript);
         await this.#executeStatements(createScript, true);
 
-        await this.#oracleInsert(this.#oracleInsertBuch);
-        await this.#oracleInsert(this.#oracleInsertTitel);
-        await this.#oracleInsert(this.#oracleInsertAbbildung);
+        await this.#oracleInsert(this.#oracleInsertFlugzeug);
+        await this.#oracleInsert(this.#oracleInsertModell);
+        await this.#oracleInsert(this.#oracleInsertSitzplatz);
     }
 
     async #populateSQLite() {

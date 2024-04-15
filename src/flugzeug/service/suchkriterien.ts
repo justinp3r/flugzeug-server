@@ -21,7 +21,7 @@
  */
 
 /**
- * Typdefinition für `BuchReadService.find()`und `QueryBuilder.build()`
+ * Typdefinition für `FlugzeugReadService.find()`und `QueryBuilder.build()`
  */
 export interface Suchkriterien {
     readonly preis?: number;
