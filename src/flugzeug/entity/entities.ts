@@ -19,5 +19,5 @@ import { Flugzeug } from './flugzeug.entity.js';
 import { Modell } from './modell.entity.js';
 import { Sitzplatz } from './sitzplatz.entity.js';
 
-// erforderlich in src/config/db.ts und src/buch/buch.module.ts
+// erforderlich in src/config/db.ts und src/flugzeug/flugzeug.module.ts
 export const entities = [Sitzplatz, Flugzeug, Modell];
