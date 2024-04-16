@@ -9,7 +9,7 @@
 			"name": "Query",
 			"item": [
 				{
-					"name": "Suche Buch mit ID 1",
+					"name": "Suche Flugzeug mit ID 1",
 					"event": [
 						{
 							"listen": "test",
@@ -25,8 +25,8 @@
 									"});\r",
 									"pm.test('Body mit den Properties', () => {\r",
 									"    const body = pm.response.json();\r",
-									"    const { buch } = body.data;\r",
-									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    const { flugzeug } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = flugzeug;\r",
 									"    pm.expect(isbn).to.be.a('string');\r",
 									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
 									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
@@ -57,7 +57,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($id: ID! = \"1\") {\r\n  buch(id: $id) {\r\n    isbn\r\n    version\r\n    rating\r\n    art\r\n    preis\r\n    lieferbar\r\n    datum\r\n    homepage\r\n    schlagwoerter\r\n    titel {\r\n      titel\r\n    }\r\n    rabatt(short: true)\r\n  }\r\n}",
+								"query": "query ($id: ID! = \"1\") {\r\n  flugzeug(id: $id) {\r\n    isbn\r\n    version\r\n    rating\r\n    art\r\n    preis\r\n    lieferbar\r\n    datum\r\n    homepage\r\n    schlagwoerter\r\n    titel {\r\n      titel\r\n    }\r\n    rabatt(short: true)\r\n  }\r\n}",
 								"variables": "{\r\n  \"id\": \"1\"\r\n}"
 							}
 						},
@@ -71,7 +71,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche isbn von einem Buch mit nicht-vorhandener 999999",
+					"name": "Suche isbn von einem Flugzeug mit nicht-vorhandener 999999",
 					"event": [
 						{
 							"listen": "test",
@@ -92,7 +92,7 @@
 									"    const { message, path, extensions } = errors[0];\r",
 									"    pm.expect(message).to.include('999999');\r",
 									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    pm.expect(path[0]).to.be.equal('buch');\r",
+									"    pm.expect(path[0]).to.be.equal('flugzeug');\r",
 									"    pm.expect(extensions.code).to.be.equal('BAD_USER_INPUT');\r",
 									"});"
 								],
@@ -113,7 +113,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($id: ID! = \"1\") {\r\n  buch(id: $id) {\r\n    isbn\r\n  }\r\n}",
+								"query": "query ($id: ID! = \"1\") {\r\n  flugzeug(id: $id) {\r\n    isbn\r\n  }\r\n}",
 								"variables": "{\r\n  \"id\": \"999999\"\r\n}"
 							}
 						},
@@ -145,8 +145,8 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(buch => {\r",
-									"        const { id, version, art, titel } = buch;\r",
+									"    buecher.forEach(flugzeug => {\r",
+									"        const { id, version, art, titel } = flugzeug;\r",
 									"        pm.expect(id).to.be.a('number').that.is.gte(0);\r",
 									"        pm.expect(version).to.be.a('number').that.is.gte(0);\r",
 									"        pm.expect(art).to.be.a('string');\r",
@@ -203,7 +203,7 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.map(buch => buch.art)\r",
+									"    buecher.map(flugzeug => flugzeug.art)\r",
 									"        .forEach(art => pm.expect(art).to.be.a('string'));\r",
 									"});"
 								],
@@ -256,8 +256,8 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(buch => {\r",
-									"        const { art, schlagwoerter, titel } = buch;\r",
+									"    buecher.forEach(flugzeug => {\r",
+									"        const { art, schlagwoerter, titel } = flugzeug;\r",
 									"        pm.expect(art).to.be.a('string');\r",
 									"        pm.expect(schlagwoerter).to.be.an('array');\r",
 									"        pm.expect(titel.titel).to.be.a('string').that.includes('ta');\r",
@@ -369,8 +369,8 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(buch => {\r",
-									"        const { rating, titel } = buch;\r",
+									"    buecher.forEach(flugzeug => {\r",
+									"        const { rating, titel } = flugzeug;\r",
 									"        pm.expect(rating).to.be.a('number').that.is.eq(2);\r",
 									"        pm.expect(titel.titel).to.be.a('string')\r",
 									"    });\r",
@@ -481,8 +481,8 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(buch => {\r",
-									"        const { art, titel } = buch;\r",
+									"    buecher.forEach(flugzeug => {\r",
+									"        const { art, titel } = flugzeug;\r",
 									"        pm.expect(art).to.be.a('string').that.is.eq('KINDLE');\r",
 									"        pm.expect(titel.titel).to.be.a('string').that.is.not.empty;\r",
 									"    });\r",
@@ -590,8 +590,8 @@
 									"    const body = pm.response.json();\r",
 									"    const { buecher } = body.data;\r",
 									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(buch => {\r",
-									"        const { lieferbar, titel } = buch;\r",
+									"    buecher.forEach(flugzeug => {\r",
+									"        const { lieferbar, titel } = flugzeug;\r",
 									"        pm.expect(lieferbar).to.be.true;\r",
 									"        pm.expect(titel.titel).to.be.a('string').that.is.not.empty;\r",
 									"    });\r",
@@ -734,7 +734,7 @@
 			"name": "Mutation",
 			"item": [
 				{
-					"name": "Neues Buch",
+					"name": "Neues Flugzeug",
 					"event": [
 						{
 							"listen": "test",
@@ -785,7 +785,7 @@
 					"response": []
 				},
 				{
-					"name": "Neues Buch mit ungültigen Daten",
+					"name": "Neues Flugzeug mit ungültigen Daten",
 					"event": [
 						{
 							"listen": "test",
@@ -843,7 +843,7 @@
 					"response": []
 				},
 				{
-					"name": "Buch mit ID 40 aktualisieren",
+					"name": "Flugzeug mit ID 40 aktualisieren",
 					"event": [
 						{
 							"listen": "test",
@@ -894,7 +894,7 @@
 					"response": []
 				},
 				{
-					"name": "Buch mit ID 40 mit ungültigen Daten aktualisieren",
+					"name": "Flugzeug mit ID 40 mit ungültigen Daten aktualisieren",
 					"event": [
 						{
 							"listen": "test",
@@ -952,7 +952,7 @@
 					"response": []
 				},
 				{
-					"name": "Nicht-Vorhandenes Buch aktualisieren",
+					"name": "Nicht-Vorhandenes Flugzeug aktualisieren",
 					"event": [
 						{
 							"listen": "test",
@@ -1008,7 +1008,7 @@
 					"response": []
 				},
 				{
-					"name": "Buch mit ID 60 löschen",
+					"name": "Flugzeug mit ID 60 löschen",
 					"event": [
 						{
 							"listen": "test",

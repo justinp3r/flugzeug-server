@@ -19,13 +19,13 @@
 
 actor Gast
 
-boundary BuchGetController
-control BuchReadService
-database buch
+boundary FlugzeugGetController
+control FlugzeugReadService
+database flugzeug 
 
-Gast -> BuchGetController : GET / getById()
-BuchGetController -> BuchReadService: findById()
-BuchReadService -> buch: [TypeORM]
+Gast -> FlugzeugGetController : GET / getById()
+FlugzeugGetController -> FlugzeugReadService: findById()
+FlugzeugReadService -> flugzeug: [TypeORM]
 
 footer (c) Jürgen Zimmermann
 

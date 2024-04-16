@@ -66,10 +66,10 @@ ligula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
 cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit
 amet ligula.
 
-."BuchGetController" für Lesezugriffe an der REST-Schnittstelle
-[plantuml,BuchGetController,svg]
+."FlugzeugGetController" für Lesezugriffe an der REST-Schnittstelle
+[plantuml,FlugzeugGetController,svg]
 ----
-include::BuchGetController.plantuml[]
+include::FlugzeugGetController.plantuml[]
 ----
 
 Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Donec
@@ -84,48 +84,48 @@ include::sequenzdiagramm.plantuml[]
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut.
 
-."BuchWriteController" für Schreibzugriffe an der REST-Schnittstelle
-[plantuml,BuchGetController,svg]
+."FlugzeugWriteController" für Schreibzugriffe an der REST-Schnittstelle
+[plantuml,FlugzeugGetController,svg]
 ----
-include::BuchWriteController.plantuml[]
+include::FlugzeugWriteController.plantuml[]
 ----
 
 === Die GraphQL-Schnittstelle
 
 Donec sollicitudin molestie malesuada. Donec rutrum congue leo eget malesuada.
 
-.BuchQueryResolver für Lesezugriffe an der GraphQL-Schnittstelle
-[plantuml,BuchQueryResolver,svg]
+.FlugzeugQueryResolver für Lesezugriffe an der GraphQL-Schnittstelle
+[plantuml,FlugzeugQueryResolver,svg]
 ----
-include::BuchQueryResolver.plantuml[]
+include::FlugzeugQueryResolver.plantuml[]
 ----
 
 Donec sollicitudin molestie malesuada. Praesent sapien massa, convallis a
 pellentesque nec, egestas non nisi.
 
-.BuchMutationResolver für Schreibzugriffe an der GraphQL-Schnittstelle
-[plantuml,BuchMutationResolver,svg]
+.FlugzeugMutationResolver für Schreibzugriffe an der GraphQL-Schnittstelle
+[plantuml,FlugzeugMutationResolver,svg]
 ----
-include::BuchMutationResolver.plantuml[]
+include::FlugzeugMutationResolver.plantuml[]
 ----
 
 === Die Geschäftslogik
 
 Donec rutrum congue leo eget malesuada. Donec rutrum congue leo eget malesuada.
 
-."BuchReadService" von der Geschäftslogik
-[plantuml,BuchReadService,svg]
+."FlugzeugReadService" von der Geschäftslogik
+[plantuml,FlugzeugReadService,svg]
 ----
-include::BuchReadService.plantuml[]
+include::FlugzeugReadService.plantuml[]
 ----
 
 Pellentesque in ipsum id orci porta dapibus. Donec rutrum congue leo eget
 malesuada.
 
-."BuchWriteService" von der Geschäftslogik
-[plantuml,BuchWriteService,svg]
+."FlugzeugWriteService" von der Geschäftslogik
+[plantuml,FlugzeugWriteService,svg]
 ----
-include::BuchWriteService.plantuml[]
+include::FlugzeugWriteService.plantuml[]
 ----
 
 === Klasse für Entities
@@ -134,9 +134,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur arcu erat,
 accumsan id imperdiet et, porttitor at sem.
 
 .Entity
-[plantuml,Buch,svg]
+[plantuml,Flugzeug,svg]
 ----
-include::Buch.plantuml[]
+include::Flugzeug.plantuml[]
 ----
 
 === ER-Diagramm

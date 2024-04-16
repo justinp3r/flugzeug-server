@@ -43,42 +43,42 @@ package nest-keycloak-connect {
   hide Roles circle
 }
 
-package buch #DDDDDD {
+package flugzeug #DDDDDD {
   package entity #FFFFFF {
-    class Buch <<entity>>
+    class Flugzeug <<entity>>
   }
 
   package service #FFFFFF {
-    class BuchWriteService << control >>
+    class FlugzeugWriteService << control >>
   }
 
-  class "type BuchDTO = Omit<Buch, 'abbildungen' | 'aktualisiert' | 'erzeugt'" as BuchDTO
-  hide BuchDTO circle
+  class "type FlugzeugDTO = Omit<Flugzeug, 'abbildungen' | 'aktualisiert' | 'erzeugt'" as FlugzeugDTO
+  hide FlugzeugDTO circle
 
     interface IdInput {
         id: number
     }
 
-  class BuchMutationResolver << control >> << @Resolver() >> << @UseGuards() >> << @UseInterceptors() >> {
-    + @Mutation() @Roles() async create(@Args() buchDTO: BuchDTO): Promise<number>
-    + @Mutation() @Roles() async update(@Args() buchDTO: BuchDTO): Promise<number>
+  class FlugzeugMutationResolver << control >> << @Resolver() >> << @UseGuards() >> << @UseInterceptors() >> {
+    + @Mutation() @Roles() async create(@Args() flugzeugDTO: FlugzeugDTO): Promise<number>
+    + @Mutation() @Roles() async update(@Args() flugzeugDTO: FlugzeugDTO): Promise<number>
     + @Mutation() @Roles() async delete(@Args() id: IdInput): Promise<boolean>
   }
 
-  BuchMutationResolver o-down-> "1" BuchWriteService : service
+  FlugzeugMutationResolver o-down-> "1" FlugzeugWriteService : service
 
-  BuchMutationResolver ..> Buch
-  BuchMutationResolver ..> BuchDTO
-  BuchMutationResolver ..> IdInput
-  BuchDTO .up.> Buch
-  BuchMutationResolver ..> Promise
-  BuchMutationResolver ..> Resolver
+  FlugzeugMutationResolver ..> Flugzeug
+  FlugzeugMutationResolver ..> FlugzeugDTO
+  FlugzeugMutationResolver ..> IdInput
+  FlugzeugDTO .up.> Flugzeug
+  FlugzeugMutationResolver ..> Promise
+  FlugzeugMutationResolver ..> Resolver
 
-  BuchMutationResolver .up.> AuthGuard
-  BuchMutationResolver .up.> Roles
+  FlugzeugMutationResolver .up.> AuthGuard
+  FlugzeugMutationResolver .up.> Roles
 
-  BuchDTO .[hidden].> Promise
-  BuchDTO .[hidden].> Resolver
+  FlugzeugDTO .[hidden].> Promise
+  FlugzeugDTO .[hidden].> Resolver
 }
 
 hide empty members
