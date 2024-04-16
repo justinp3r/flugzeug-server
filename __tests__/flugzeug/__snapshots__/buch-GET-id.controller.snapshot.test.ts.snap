@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET /rest/:id Buch zu vorhandener ID 1`] = `"https://laptop-9hqhrkho:3000/rest/1"`;
