@@ -56,7 +56,7 @@ export class FlugzeugDtoOhneRef {
 }
 
 /**
- * Entity-Klasse für Bücher ohne TypeORM.
+ * Entity-Klasse für Flugzeuge ohne TypeORM.
  */
 export class FlugzeugDTO extends FlugzeugDtoOhneRef {
     @ValidateNested()
