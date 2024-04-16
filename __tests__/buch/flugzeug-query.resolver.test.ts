@@ -18,7 +18,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { type Flugzeug, type FlugzeugArt } from '../../src/flugzeug/entity/flugzeug.entity.js';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import {
@@ -28,6 +27,7 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
+import { type Flugzeug } from '../../src/flugzeug/entity/flugzeug.entity.js';
 import { type GraphQLFormattedError } from 'graphql';
 import { type GraphQLRequest } from '@apollo/server';
 import { HttpStatus } from '@nestjs/common';
