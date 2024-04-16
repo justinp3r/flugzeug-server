@@ -26,7 +26,7 @@ import {
     startServer,
 } from '../testserver.js';
 import { type GraphQLRequest } from '@apollo/server';
-import { type GraphQLResponseBody } from './buch-query.resolver.test.js';
+import { type GraphQLResponseBody } from './flugzeug-query.resolver.test.js';
 import { HttpStatus } from '@nestjs/common';
 import { loginGraphQL } from '../login.js';
 
@@ -62,7 +62,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Neues Buch', async () => {
+    test('Neues Flugzeug', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -71,22 +71,14 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            isbn: "978-0-321-19368-1",
-                            rating: 1,
-                            art: KINDLE,
-                            preis: 99.99,
-                            rabatt: 0.123,
-                            lieferbar: true,
-                            datum: "2022-02-28",
-                            homepage: "https://create.mutation",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
-                            titel: {
-                                titel: "Titelcreatemutation",
-                                untertitel: "untertitelcreatemutation"
+                            preis: 999996.99,
+                            einsatzbereit: true,
+                            baujahr: "2022-02-28",
+                            modell: {
+                                modell: "A319",
                             },
-                            abbildungen: [{
-                                beschriftung: "Abb. 1",
-                                contentType: "img/png"
+                            sitzplaetze: [{
+                                sitzplatzklasse: "Klasse 1",
                             }]
                         }
                     ) {
@@ -113,8 +105,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    // eslint-disable-next-line max-lines-per-function
-    test('Buch mit ungueltigen Werten neu anlegen', async () => {
+    test('Flugzeug mit ungueltigen Werten neu anlegen', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -123,16 +114,11 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            isbn: "falsche-ISBN",
-                            rating: -1,
-                            art: KINDLE,
                             preis: -1,
-                            rabatt: 2,
-                            lieferbar: false,
-                            datum: "12345-123-123",
-                            homepage: "anyHomepage",
-                            titel: {
-                                titel: "?!"
+                            einsatzbereit: false,
+                            baujahr: "12345-123-123",
+                            modell: {
+                                modell: "?!"
                             }
                         }
                     ) {
@@ -142,13 +128,9 @@ describe('GraphQL Mutations', () => {
             `,
         };
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
             expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^titel.titel /u),
+            expect.stringMatching(/^baujahr /u),
+            expect.stringMatching(/^modell.modell /u),
         ];
 
         // when
@@ -177,7 +159,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch aktualisieren', async () => {
+    test('Flugzeug aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -188,15 +170,9 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "40",
                             version: 0,
-                            isbn: "978-0-007-09732-6",
-                            rating: 5,
-                            art: KINDLE,
-                            preis: 444.44,
-                            rabatt: 0.099,
-                            lieferbar: false,
-                            datum: "2021-04-04",
-                            homepage: "https://update.mutation"
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
+                            preis: 400522.44,
+                            einsatzbereit: false,
+                            baujahr: "2021-04-04",
                         }
                     ) {
                         version
@@ -221,7 +197,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch mit ungueltigen Werten aktualisieren', async () => {
+    test('Flugzeug mit ungueltigen Werten aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -232,16 +208,10 @@ describe('GraphQL Mutations', () => {
                     update(
                         input: {
                             id: "${id}",
-                            version: 0,
-                            isbn: "falsche-ISBN",
-                            rating: -1,
-                            art: KINDLE,
+                            version: 0
                             preis: -1,
-                            rabatt: 2,
-                            lieferbar: false,
-                            datum: "12345-123-123",
-                            homepage: "anyHomepage",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
+                            einsatzbereit: false,
+                            baujahr: "12345-123-123"
                         }
                     ) {
                         version
@@ -250,12 +220,8 @@ describe('GraphQL Mutations', () => {
             `,
         };
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
             expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
-            expect.stringMatching(/^homepage /u),
+            expect.stringMatching(/^baujahr /u),
         ];
 
         // when
@@ -281,7 +247,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Nicht-vorhandenes Buch aktualisieren', async () => {
+    test('Nicht-vorhandenes Flugzeug aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -293,15 +259,9 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "${id}",
                             version: 0,
-                            isbn: "978-0-007-09732-6",
-                            rating: 5,
-                            art: DRUCKAUSGABE,
                             preis: 99.99,
-                            rabatt: 0.099,
-                            lieferbar: false,
-                            datum: "2021-01-02",
-                            homepage: "https://acme.com",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
+                            einsatzbereit: false,
+                            baujahr: "2021-01-02"
                         }
                     ) {
                         version
@@ -330,7 +290,7 @@ describe('GraphQL Mutations', () => {
         const { message, path, extensions } = error;
 
         expect(message).toBe(
-            `Es gibt kein Buch mit der ID ${id.toLowerCase()}.`,
+            `Es gibt kein Flugzeug mit der ID ${id.toLowerCase()}.`,
         );
         expect(path).toBeDefined();
         expect(path![0]).toBe('update');
@@ -339,7 +299,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch loeschen', async () => {
+    test('Flugzeug loeschen', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -367,7 +327,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch loeschen als "user"', async () => {
+    test('Flugzeug loeschen als "user"', async () => {
         // given
         const token = await loginGraphQL(client, 'user', 'p');
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention

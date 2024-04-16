@@ -24,65 +24,34 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type BuchDTO } from '../../src/buch/rest/flugzeugDTO.entity.js';
-import { BuchReadService } from '../../src/buch/service/flugzeug-read.service.js';
-import { type ErrorResponse } from './error-response.js';
+import { type FlugzeugDTO } from '../../src/flugzeug/rest/flugzeugDTO.entity.js';
+import { FlugzeugReadService } from '../../src/flugzeug/service/flugzeug-read.service.js';
 import { HttpStatus } from '@nestjs/common';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const neuesBuch: BuchDTO = {
-    isbn: '978-0-007-00644-1',
-    rating: 1,
-    art: 'DRUCKAUSGABE',
+const neuesFlugzeug: FlugzeugDTO = {
     preis: 99.99,
-    rabatt: 0.123,
-    lieferbar: true,
-    datum: '2022-02-28',
-    homepage: 'https://post.rest',
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
-    titel: {
-        titel: 'Titelpost',
-        untertitel: 'untertitelpos',
+    einsatzbereit: true,
+    baujahr: '2022-02-28',
+    modell: {
+        modell: 'Titelpost',
     },
-    abbildungen: [
+    sitzplaetze: [
         {
-            beschriftung: 'Abb. 1',
-            contentType: 'img/png',
+            sitzplatzklasse: 'Klasse 1',
         },
     ],
 };
-const neuesBuchInvalid: Record<string, unknown> = {
-    isbn: 'falsche-ISBN',
-    rating: -1,
-    art: 'UNSICHTBAR',
+const neuesFlugzeugInvalid: Record<string, unknown> = {
     preis: -1,
-    rabatt: 2,
-    lieferbar: true,
-    datum: '12345-123-123',
-    homepage: 'anyHomepage',
-    titel: {
-        titel: '?!',
-        untertitel: 'Untertitelinvalid',
+    einsatzbereit: true,
+    baujahr: '12345-123-123',
+    modell: {
+        modell: '?!',
     },
-};
-const neuesBuchIsbnExistiert: BuchDTO = {
-    isbn: '978-3-897-22583-1',
-    rating: 1,
-    art: 'DRUCKAUSGABE',
-    preis: 99.99,
-    rabatt: 0.099,
-    lieferbar: true,
-    datum: '2022-02-28',
-    homepage: 'https://post.isbn/',
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
-    titel: {
-        titel: 'Titelpostisbn',
-        untertitel: 'Untertitelpostisbn',
-    },
-    abbildungen: undefined,
 };
 
 // -----------------------------------------------------------------------------
@@ -111,7 +80,7 @@ describe('POST /rest', () => {
         await shutdownServer();
     });
 
-    test('Neues Buch', async () => {
+    test('Neues Flugzeug', async () => {
         // given
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
@@ -119,7 +88,7 @@ describe('POST /rest', () => {
         // when
         const response: AxiosResponse<string> = await client.post(
             '/rest',
-            neuesBuch,
+            neuesFlugzeug,
             { headers },
         );
 
@@ -140,30 +109,25 @@ describe('POST /rest', () => {
         const idStr = location.slice(indexLastSlash + 1);
 
         expect(idStr).toBeDefined();
-        expect(BuchReadService.ID_PATTERN.test(idStr)).toBe(true);
+        expect(FlugzeugReadService.ID_PATTERN.test(idStr)).toBe(true);
 
         expect(data).toBe('');
     });
 
-    test('Neues Buch mit ungueltigen Daten', async () => {
+    test('Neues Flugzeug mit ungueltigen Daten', async () => {
         // given
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
-            expect.stringMatching(/^art /u),
             expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^titel.titel /u),
+            expect.stringMatching(/^baujahr /u),
+            expect.stringMatching(/^modell.modell /u),
         ];
 
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
             '/rest',
-            neuesBuchInvalid,
+            neuesFlugzeugInvalid,
             { headers },
         );
 
@@ -180,39 +144,18 @@ describe('POST /rest', () => {
         expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
-    test('Neues Buch, aber die ISBN existiert bereits', async () => {
-        // given
-        const token = await loginRest(client);
-        headers.Authorization = `Bearer ${token}`;
-
-        // when
-        const response: AxiosResponse<ErrorResponse> = await client.post(
-            '/rest',
-            neuesBuchIsbnExistiert,
-            { headers },
-        );
-
-        // then
-        const { data } = response;
-
-        const { message, statusCode } = data;
-
-        expect(message).toEqual(expect.stringContaining('ISBN'));
-        expect(statusCode).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-    });
-
-    test('Neues Buch, aber ohne Token', async () => {
+    test('Neues Flugzeug, aber ohne Token', async () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
             '/rest',
-            neuesBuch,
+            neuesFlugzeug,
         );
 
         // then
         expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
     });
 
-    test('Neues Buch, aber mit falschem Token', async () => {
+    test('Neues Flugzeug, aber mit falschem Token', async () => {
         // given
         const token = 'FALSCH';
         headers.Authorization = `Bearer ${token}`;
@@ -220,7 +163,7 @@ describe('POST /rest', () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
             '/rest',
-            neuesBuch,
+            neuesFlugzeug,
             { headers },
         );
 

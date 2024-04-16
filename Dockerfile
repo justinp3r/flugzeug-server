@@ -116,7 +116,7 @@ FROM node:${NODE_VERSION}-bookworm-slim AS final
 # https://spdx.org/licenses
 # MAINTAINER ist deprecated https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
 LABEL org.opencontainers.image.title="buch" \
-    org.opencontainers.image.description="Appserver buch mit Basis-Image Debian Bookworm" \
+    org.opencontainers.image.description="Appserver flugzeug mit Basis-Image Debian Bookworm" \
     org.opencontainers.image.version="2024.04.0-bookworm" \
     org.opencontainers.image.licenses="GPL-3.0-or-later" \
     org.opencontainers.image.authors="Juergen.Zimmermann@h-ka.de"
