@@ -36,43 +36,33 @@ package typeorm {
   hide UpdateDateColumn circle
 }
 
-package buch.entity {
-  class "type BuchArt = 'KINDLE' | 'DRUCKAUSGABE'" as BuchArt
-  hide BuchArt circle
-
-  class Buch <<entity>> <<@Entity>> {
+package flugzeug.entity {
+  
+  class Flugzeug <<entity>> <<@Entity>> {
     @Column() @PrimaryColumn() readonly id: number
     @Column() readonly version: number
-    @Column() readonly isbn: string
-    @Column() readonly rating: number
-    @Column() readonly art: BuchArt
     @Column() readonly preis: number
-    @Column() readonly rabatt: number
-    @Column() readonly lieferbar: boolean
-    @Column() readonly datum: Date
+    @Column() readonly einsatzbereit: boolean
+    @Column() readonly baujahr: Date
     @Column() readonly homepage?: string
-    @Column() readonly schlagwoerter?: string
     @CreateDateColumn() readonly erzeugt: Date
     @UpdateDateColumn() readonly aktualisiert: Date
   }
 
-  class Titel <<entity>> <<@Entity>> {
+  class Modell <<entity>> <<@Entity>> {
     @Column() @PrimaryColumn() readonly id: number
-    @Column() readonly titel: string
-    @Column() readonly untertitel?: string
+    @Column() readonly modell: string
   }
 
-  class Abbildung <<entity>> <<@Entity>> {
+  class Sitzplatz <<entity>> <<@Entity>> {
     @Column() @PrimaryColumn() readonly id: number
-    @Column() readonly beschriftung: string
-    @Column() readonly contentType?: string
+    @Column() readonly sitzplatzklasse: string
   }
 
-  Buch *--> "1" Titel : @OneToOne() \ntitel
-  Buch *--> "*" Abbildung : @OneToMany() \nabbildungen
+  Flugzeug *--> "1" Modell : @OneToOne() \ntitel
+  Flugzeug *--> "*" Sitzplatz : @OneToMany() \nabbildungen
 
-  Buch .right.> Entity
-  Buch .right.> BuchArt
+  Flugzeug .right.> Entity
 }
 
 hide empty members

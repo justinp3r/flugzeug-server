@@ -21,15 +21,15 @@ actor Gast
 actor Admin
 actor Kunde
 
-rectangle buch {
-    Gast --> (Buch suchen)
-    Admin --> (Buch suchen)
-    Admin --> (Buch anlegen)
-    Admin --> (Buch ändern)
-    Admin --> (Buch löschen)
-    Kunde --> (Buch suchen)
-    Kunde --> (Buch anlegen)
-    Kunde --> (Buch ändern)
+rectangle flugzeug {
+    Gast --> (Flugzeug suchen)
+    Admin --> (Flugzeug suchen)
+    Admin --> (Flugzeug anlegen)
+    Admin --> (Flugzeug ändern)
+    Admin --> (Flugzeug löschen)
+    Kunde --> (Flugzeug suchen)
+    Kunde --> (Flugzeug anlegen)
+    Kunde --> (Flugzeug ändern)
 }
 
 footer (c) Jürgen Zimmermann

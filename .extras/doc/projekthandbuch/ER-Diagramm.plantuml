@@ -23,41 +23,35 @@ hide circle
 ' evtl. Prbleme mit Kraehenfuessen vermeiden
 skinparam linetype ortho
 
-entity "Buch" {
+entity "Flugzeug" {
   * id: integer <<generated>>
   --
   * version: integer
-  * isbn: text
-  * rating: number
-  * art: text
   * preis: number
-  * rabatt: number
-  * lieferbar: boolean
-    datum: date
+  * einsatzbereit: boolean
+    baujahr: date
     homepage: text
-  * **titel_id**: integer <<FK>>
-    schlagwoerter: text
+  * **modell_id**: integer <<FK>>
   * erzeugt: timestamp
   * aktualisiert: timestamp
 }
 
-entity "Titel" {
+entity "Modell" {
   * id: integer <<generated>>
   --
-  * titel: text
-    untertitel: text
+  * modell: text
 }
 
-entity "Abbildung" {
+entity "Sitzplatz" {
   * id: integer <<generated>>
   --
-  * beschriftung: text
+  * sitzplatzklasse: text
     contentType: text
-  * **buch_id**: integer <<FK>>
+  * **flugzeug_id**: integer <<FK>>
 }
 
-Buch ||..|| Titel
-Buch ||..o{ Abbildung
+Flugzeug ||..|| Modell
+Flugzeug ||..o{ Sitzplatz
 
 footer (c) Jürgen Zimmermann
 

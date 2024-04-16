@@ -31,7 +31,7 @@ if ($versionMinimum -gt $versionCurrent) {
 $host.ui.RawUI.WindowTitle = 'dependency-check'
 
 $nvdApiKey = '7b6c1b7b-3405-4c62-941b-114e05bdd887'
-$project = 'buch'
+$project = 'flugzeug'
 
 C:\Zimmermann\dependency-check\bin\dependency-check.bat `
   --nvdApiKey $nvdApiKey `

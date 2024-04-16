@@ -25,12 +25,12 @@ actor GraphQLClient
 node "Nest" {
   [RequestLoggerMiddleware]
 
-  [BuchController]
-  [BuchResolver]
+  [FlugzeugController]
+  [FlugzeugResolver]
 
-  [BuchService]
+  [FlugzeugService]
 
-  [Repository<Buch>]
+  [Repository<Flugzeug>]
 
   [MailService]
 }
