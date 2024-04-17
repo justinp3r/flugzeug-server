@@ -59,7 +59,7 @@ type Flugzeug {
   einsatzbereit: Boolean
   baujahr: String
   # 1:1-Beziehung
-  modell: Titel!
+  modell: Modell!
 }
 
 "Suchkriterien für Bücher"
@@ -83,7 +83,7 @@ input FlugzeugInput {
   preis: Float
   einsatzbereit: Boolean
   baujahr: String
-  modell: TitelInput!
+  modell: ModellInput!
   sitzplaetze: [SitzplatzInput!]
 }
 
