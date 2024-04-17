@@ -74,14 +74,14 @@ export class QueryBuilder {
 
         // Fetch-Join: aus QueryBuilder "flugzeug" die Property "titel" ->  Tabelle "titel"
         queryBuilder.innerJoinAndSelect(
-            `${this.#flugzeugAlias}.titel`,
+            `${this.#flugzeugAlias}.modell`,
             this.#modellAlias,
         );
 
         if (mitSitzplaetze) {
             // Fetch-Join: aus QueryBuilder "flugzeug" die Property "abbildungen" -> Tabelle "abbildung"
             queryBuilder.leftJoinAndSelect(
-                `${this.#flugzeugAlias}.abbildungen`,
+                `${this.#flugzeugAlias}.sitzplaetze`,
                 this.#abbildungAlias,
             );
         }
@@ -118,7 +118,7 @@ export class QueryBuilder {
             const ilike =
                 typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
             queryBuilder = queryBuilder.where(
-                `${this.#modellAlias}.titel ${ilike} :titel`,
+                `${this.#modellAlias}.modell ${ilike} :modell`,
                 { modell: `%${modell}%` },
             );
             useWhere = false;
