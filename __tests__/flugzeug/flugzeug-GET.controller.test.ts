@@ -95,7 +95,7 @@ describe('GET /rest', () => {
 
         const { flugzeuge } = data._embedded;
 
-        // Jedes Buch hat einen Titel mit dem Teilstring 'a'
+        // Jedes Flugzeug hat einen Titel mit dem Teilstring 'a'
         flugzeuge
             .map((flugzeug) => flugzeug.modell)
             .forEach((modell) =>

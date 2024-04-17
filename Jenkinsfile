@@ -130,7 +130,7 @@ pipeline {
                 }
 
                 // /var/jenkins_home ist das Homedirectory vom User "jenkins"
-                // /var/jenkins_home/workspace/buch (siehe "pwd" oben)
+                // /var/jenkins_home/workspace/flugzeug (siehe "pwd" oben)
                 sh 'cat package.json'
 
                 // Konfigurationsverzeichnis /root/.npm
@@ -209,14 +209,14 @@ pipeline {
 
                 success {
                     script {
-                        if (fileExists("${env.WORKSPACE}/buch.zip")) {
-                            sh 'rm buch.zip'
+                        if (fileExists("${env.WORKSPACE}/flugzeug.zip")) {
+                            sh 'rm flugzeug.zip'
                         }
                     }
                     // https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#zip-create-zip-file
-                    zip zipFile: 'buch.zip', archive: false, dir: 'dist'
-                    // jobs/buch/builds/.../archive/buch.zip
-                    archiveArtifacts 'buch.zip'
+                    zip zipFile: 'flugzeug.zip', archive: false, dir: 'dist'
+                    // jobs/flugzeug/builds/.../archive/flugzeug.zip
+                    archiveArtifacts 'flugzeug.zip'
                 }
             }
         }
@@ -224,7 +224,7 @@ pipeline {
         stage('Docker Image bauen') {
             steps {
                 echo 'TODO: Docker-Image bauen und veroeffentlichen'
-                // sh 'docker buildx build --tag juergenzimmermann/buch:2024.04.0 .'
+                // sh 'docker buildx build --tag juergenzimmermann/flugzeug:2024.04.0 .'
             }
         }
 

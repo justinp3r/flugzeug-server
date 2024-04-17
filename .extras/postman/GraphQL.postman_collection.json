@@ -26,18 +26,12 @@
 									"pm.test('Body mit den Properties', () => {\r",
 									"    const body = pm.response.json();\r",
 									"    const { flugzeug } = body.data;\r",
-									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = flugzeug;\r",
-									"    pm.expect(isbn).to.be.a('string');\r",
+									"    const { version, preis, einsatzbereit, baujahr, modell } = flugzeug;\r",
 									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
-									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
-									"    pm.expect(art).to.be.a('string');\r",
 									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
-									"    pm.expect(lieferbar).to.be.a('boolean');\r",
-									"    pm.expect(datum).to.be.a('string');\r",
-									"    pm.expect(homepage).to.be.a('string');\r",
-									"    pm.expect(schlagwoerter).to.be.an('array');\r",
-									"    pm.expect(titel.titel).to.be.a('string');\r",
-									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"    pm.expect(einsatzbereit).to.be.a('boolean');\r",
+									"    pm.expect(baujahr).to.be.a('string');\r",
+									"    pm.expect(modell.modell).to.be.a('string');\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -57,7 +51,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($id: ID! = \"1\") {\r\n  flugzeug(id: $id) {\r\n    isbn\r\n    version\r\n    rating\r\n    art\r\n    preis\r\n    lieferbar\r\n    datum\r\n    homepage\r\n    schlagwoerter\r\n    titel {\r\n      titel\r\n    }\r\n    rabatt(short: true)\r\n  }\r\n}",
+								"query": "query ($id: ID! = \"1\") {\r\n  flugzeug(id: $id) {\r\n    version\r\n    preis\r\n    einsatzbereit\r\n    baujahr\r\n    modell {\r\n      modell\r\n    }\r\n    }\r\n}",
 								"variables": "{\r\n  \"id\": \"1\"\r\n}"
 							}
 						},
@@ -71,63 +65,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche isbn von einem Flugzeug mit nicht-vorhandener 999999",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test('Statuscode 200', () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"pm.test('Content-Type application/json', () => {\r",
-									"    const { response } = pm;\r",
-									"    const contentType = response.headers.get('Content-Type');\r",
-									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
-									"});\r",
-									"pm.test('Body mit errors', () => {\r",
-									"    const body = pm.response.json();\r",
-									"    const { errors } = body;\r",
-									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    const { message, path, extensions } = errors[0];\r",
-									"    pm.expect(message).to.include('999999');\r",
-									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    pm.expect(path[0]).to.be.equal('flugzeug');\r",
-									"    pm.expect(extensions.code).to.be.equal('BAD_USER_INPUT');\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "graphql",
-							"graphql": {
-								"query": "query ($id: ID! = \"1\") {\r\n  flugzeug(id: $id) {\r\n    isbn\r\n  }\r\n}",
-								"variables": "{\r\n  \"id\": \"999999\"\r\n}"
-							}
-						},
-						"url": {
-							"raw": "{{graphql_url}}",
-							"host": [
-								"{{graphql_url}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Suche id, version und titel von allen Buechern",
+					"name": "Suche id, version und modell von allen Flugzeugen",
 					"event": [
 						{
 							"listen": "test",
@@ -143,14 +81,13 @@
 									"});\r",
 									"pm.test('Body mit den Properties', () => {\r",
 									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(flugzeug => {\r",
-									"        const { id, version, art, titel } = flugzeug;\r",
+									"    const { flugzeuge } = body.data;\r",
+									"    pm.expect(flugzeuge).to.be.an('array').that.is.not.empty;\r",
+									"    flugzeuge.forEach(flugzeug => {\r",
+									"        const { id, version, art, modell } = flugzeug;\r",
 									"        pm.expect(id).to.be.a('number').that.is.gte(0);\r",
 									"        pm.expect(version).to.be.a('number').that.is.gte(0);\r",
-									"        pm.expect(art).to.be.a('string');\r",
-									"        pm.expect(titel.titel).to.be.a('string');\r",
+									"        pm.expect(modell.modell).to.be.a('string');\r",
 									"    });\r",
 									"});"
 								],
@@ -171,7 +108,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "{\r\n  buecher {\r\n    id\r\n    version\r\n    art\r\n    titel {\r\n      titel\r\n    }\r\n  }\r\n}",
+								"query": "{\r\n  flugzeuge {\r\n    id\r\n    version\r\n        modell {\r\n      modell\r\n    }\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
@@ -185,7 +122,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche art von Buechern mit Titel Alpha",
+					"name": "Suche baujahr von Flugzeugen mit Modell Alpha",
 					"event": [
 						{
 							"listen": "test",
@@ -199,12 +136,12 @@
 									"    const contentType = response.headers.get('Content-Type');\r",
 									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
 									"});\r",
-									"pm.test('Body mit art', () => {\r",
+									"pm.test('Body mit baujahr', () => {\r",
 									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.map(flugzeug => flugzeug.art)\r",
-									"        .forEach(art => pm.expect(art).to.be.a('string'));\r",
+									"    const { flugzeuge } = body.data;\r",
+									"    pm.expect(flugzeuge).to.be.an('array').that.is.not.empty;\r",
+									"    flugzeuge.map(flugzeug => flugzeug.baujahr)\r",
+									"        .forEach(baujahr => pm.expect(baujahr).to.be.a('Date'));\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -224,8 +161,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($titel: String = \"Alpha\") {\r\n  buecher(suchkriterien: {titel: $titel}) {\r\n    art\r\n  }\r\n}",
-								"variables": "{\r\n  \"titel\": \"Alpha\"\r\n}"
+								"query": "query ($modell: String = \"Alpha\") {\r\n  flugzeuge(suchkriterien: {modell: $modell}) {\r\n    art\r\n  }\r\n}",
+								"variables": "{\r\n  \"modell\": \"Alpha\"\r\n}"
 							}
 						},
 						"url": {
@@ -238,7 +175,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche art, schlagwoerter, titel von Buechern mit Teilstring \"ta\" im Titel",
+					"name": "Suche modell von Flugzeugen mit Teilstring \"ta\" im modell",
 					"event": [
 						{
 							"listen": "test",
@@ -252,15 +189,13 @@
 									"    const contentType = response.headers.get('Content-Type');\r",
 									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
 									"});\r",
-									"pm.test('Body mit art, schlagwoerter, titel', () => {\r",
+									"pm.test('Body mit modell', () => {\r",
 									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(flugzeug => {\r",
-									"        const { art, schlagwoerter, titel } = flugzeug;\r",
-									"        pm.expect(art).to.be.a('string');\r",
-									"        pm.expect(schlagwoerter).to.be.an('array');\r",
-									"        pm.expect(titel.titel).to.be.a('string').that.includes('ta');\r",
+									"    const { flugzeuge } = body.data;\r",
+									"    pm.expect(flugzeuge).to.be.an('array').that.is.not.empty;\r",
+									"    flugzeuge.forEach(flugzeug => {\r",
+									"        const { modell } = flugzeug;\r",
+									"        pm.expect(modell.modell).to.be.a('string').that.includes('ta');\r",
 									"    });\r",
 									"});"
 								],
@@ -281,8 +216,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($titel: String = \"a\") {\r\n  buecher(suchkriterien: {titel: $titel}) {\r\n    art\r\n    schlagwoerter\r\n    titel {\r\n      titel\r\n    }\r\n  }\r\n}",
-								"variables": "{\r\n  \"titel\": \"ta\"\r\n}"
+								"query": "query ($modell: String = \"a\") {\r\n  flugzeuge(suchkriterien: {modell: $modell}) {\r\n    modell {\r\n      modell\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"modell\": \"ta\"\r\n}"
 							}
 						},
 						"url": {
@@ -295,7 +230,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche von Buechern mit nicht-vorhandenem Titel",
+					"name": "Suche von Flugzeugen mit nicht-vorhandenem Modell",
 					"event": [
 						{
 							"listen": "test",
@@ -314,9 +249,9 @@
 									"    const { errors } = body;\r",
 									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
 									"    const { message, path, extensions } = errors[0];\r",
-									"    pm.expect(message).to.be.a('string').that.includes('titel');\r",
+									"    pm.expect(message).to.be.a('string').that.includes('modell');\r",
 									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    pm.expect(path[0]).to.be.equal('buecher');\r",
+									"    pm.expect(path[0]).to.be.equal('flugzeuge');\r",
 									"    pm.expect(extensions.code).to.be.equal('BAD_USER_INPUT');\r",
 									"});"
 								],
@@ -337,8 +272,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($titel: String = \"Nichtvorhanden\") {\r\n  buecher(suchkriterien: {titel: $titel}) {\r\n    art\r\n  }\r\n}",
-								"variables": "{\r\n  \"titel\": \"Nichtvorhanden\"\r\n}"
+								"query": "query ($modell: String = \"Nichtvorhanden\") {\r\n  flugzeuge(suchkriterien: {modell: $modell}) {\r\n    art\r\n  }\r\n}",
+								"variables": "{\r\n  \"modell\": \"Nichtvorhanden\"\r\n}"
 							}
 						},
 						"url": {
@@ -351,7 +286,7 @@
 					"response": []
 				},
 				{
-					"name": "Suche von Buechern mit rating 2",
+					"name": "Suche von Flugzeugen mit einsatzbereit=true",
 					"event": [
 						{
 							"listen": "test",
@@ -365,14 +300,14 @@
 									"    const contentType = response.headers.get('Content-Type');\r",
 									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
 									"});\r",
-									"pm.test('Body mit rating und titel', () => {\r",
+									"pm.test('Body mit einsatzbereit und modell', () => {\r",
 									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(flugzeug => {\r",
-									"        const { rating, titel } = flugzeug;\r",
-									"        pm.expect(rating).to.be.a('number').that.is.eq(2);\r",
-									"        pm.expect(titel.titel).to.be.a('string')\r",
+									"    const { flugzeuge } = body.data;\r",
+									"    pm.expect(flugzeuge).to.be.an('array').that.is.not.empty;\r",
+									"    flugzeuge.forEach(flugzeug => {\r",
+									"        const { einsatzbereit, modell } = flugzeug;\r",
+									"        pm.expect(einsatzbereit).to.be.true;\r",
+									"        pm.expect(modell.modell).to.be.a('string').that.is.not.empty;\r",
 									"    });\r",
 									"});"
 								],
@@ -393,229 +328,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query ($rating: Int = 2) {\r\n  buecher(suchkriterien: {rating: $rating}) {\r\n    rating\r\n    titel {\r\n        titel\r\n    }\r\n  }\r\n}",
-								"variables": "{\r\n  \"rating\": 2\r\n}"
-							}
-						},
-						"url": {
-							"raw": "{{graphql_url}}",
-							"host": [
-								"{{graphql_url}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Suche von Buechern mit nicht-vorhandenem rating",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test('Statuscode 200', () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"pm.test('Content-Type application/json', () => {\r",
-									"    const { response } = pm;\r",
-									"    const contentType = response.headers.get('Content-Type');\r",
-									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
-									"});\r",
-									"pm.test('Body mit errors', () => {\r",
-									"    const body = pm.response.json();\r",
-									"    const { errors } = body;\r",
-									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    const { message, path, extensions } = errors[0];\r",
-									"    pm.expect(message).to.be.a('string').that.includes('rating');\r",
-									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    pm.expect(path[0]).to.be.equal('buecher');\r",
-									"    pm.expect(extensions.code).to.be.equal('BAD_USER_INPUT');\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "graphql",
-							"graphql": {
-								"query": "query ($rating: Int = 99) {\r\n  buecher(suchkriterien: {rating: $rating}) {\r\n    art\r\n  }\r\n}",
-								"variables": "{\r\n  \"rating\": 99\r\n}"
-							}
-						},
-						"url": {
-							"raw": "{{graphql_url}}",
-							"host": [
-								"{{graphql_url}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Suche von Buechern mit Art KINDLE",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test('Statuscode 200', () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"pm.test('Content-Type application/json', () => {\r",
-									"    const { response } = pm;\r",
-									"    const contentType = response.headers.get('Content-Type');\r",
-									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
-									"});\r",
-									"pm.test('Body mit art und titel', () => {\r",
-									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(flugzeug => {\r",
-									"        const { art, titel } = flugzeug;\r",
-									"        pm.expect(art).to.be.a('string').that.is.eq('KINDLE');\r",
-									"        pm.expect(titel.titel).to.be.a('string').that.is.not.empty;\r",
-									"    });\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "graphql",
-							"graphql": {
-								"query": "query ($art: Art = KINDLE) {\r\n  buecher(suchkriterien: {art: $art}) {\r\n    art\r\n    titel {\r\n      titel\r\n    }\r\n  }\r\n}",
-								"variables": "{\r\n  \"art\": \"KINDLE\"\r\n}"
-							}
-						},
-						"url": {
-							"raw": "{{graphql_url}}",
-							"host": [
-								"{{graphql_url}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Suche von Buechern mit ungueltiger Art",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test('Statuscode 400', () => {\r",
-									"    pm.response.to.have.status(400);\r",
-									"});\r",
-									"pm.test('Content-Type application/json', () => {\r",
-									"    const { response } = pm;\r",
-									"    const contentType = response.headers.get('Content-Type');\r",
-									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
-									"});\r",
-									"pm.test('Body mit errors', () => {\r",
-									"    const body = pm.response.json();\r",
-									"    const { errors } = body;\r",
-									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
-									"    const { extensions } = errors[0];\r",
-									"    pm.expect(extensions.code).to.be.equal('GRAPHQL_VALIDATION_FAILED');\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "graphql",
-							"graphql": {
-								"query": "query ($art: String = \"UNGUELTIG\") {\r\n  buecher(suchkriterien: {art: $art}) {\r\n    art\r\n  }\r\n}",
-								"variables": "{\r\n  \"art\": \"UNGUELTIG\"\r\n}"
-							}
-						},
-						"url": {
-							"raw": "{{graphql_url}}",
-							"host": [
-								"{{graphql_url}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Suche von Buechern mit lieferbar=true",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test('Statuscode 200', () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"pm.test('Content-Type application/json', () => {\r",
-									"    const { response } = pm;\r",
-									"    const contentType = response.headers.get('Content-Type');\r",
-									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
-									"});\r",
-									"pm.test('Body mit lieferbar und titel', () => {\r",
-									"    const body = pm.response.json();\r",
-									"    const { buecher } = body.data;\r",
-									"    pm.expect(buecher).to.be.an('array').that.is.not.empty;\r",
-									"    buecher.forEach(flugzeug => {\r",
-									"        const { lieferbar, titel } = flugzeug;\r",
-									"        pm.expect(lieferbar).to.be.true;\r",
-									"        pm.expect(titel.titel).to.be.a('string').that.is.not.empty;\r",
-									"    });\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "graphql",
-							"graphql": {
-								"query": "query ($lieferbar: Boolean = true) {\r\n  buecher(suchkriterien: {lieferbar: $lieferbar}) {\r\n    lieferbar\r\n    titel {\r\n      titel\r\n    }\r\n  }\r\n}",
-								"variables": "{\r\n  \"lieferbar\": true\r\n}"
+								"query": "query ($einsatzbereit: Boolean = true) {\r\n  flugzeuge(suchkriterien: {einsatzbereit: $einsatzbereit}) {\r\n    einsatzbereit\r\n    modell {\r\n      modell\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"einsatzbereit\": true\r\n}"
 							}
 						},
 						"url": {
@@ -771,7 +485,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation {\r\n  create(\r\n    input: {\r\n      isbn: \"978-0-321-19368-1\",\r\n      rating: 1,\r\n      art: KINDLE,\r\n      preis: 99.99,\r\n      rabatt: 0.123,\r\n      lieferbar: true,\r\n      datum: \"2022-01-31\",\r\n      homepage: \"https://create.mutation\",\r\n      schlagwoerter: [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n      titel: {\r\n        titel: \"Titelcreatemutation\",\r\n        untertitel: \"untertitelcreatemutation\"\r\n      },\r\n      abbildungen: [{\r\n        beschriftung: \"Abb. 1\",\r\n        contentType: \"img/png\"\r\n      }]\r\n    }\r\n  ) {\r\n      id\r\n  }\r\n}",
+								"query": "mutation {\r\n  create(\r\n    input: {\r\n    preis: 99.99,\r\neinsatzbereit: true,\r\n    baujahr: \"2022-01-31\",\r\n      modell: {\r\n        modell \"Modellcreatemutation\",\r\n        },\r\n      sitzplaetze: [{\r\n        sitzplatzklasse: \"Abb. 1\",\r\n        }]\r\n    }\r\n  ) {\r\n      id\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
@@ -805,7 +519,7 @@
 									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
 									"    const { message, path, extensions } = errors[0];\r",
 									"    pm.expect(message).to.be.a('string');\r",
-									"    const props = ['titel.titel', 'isbn', 'rating', 'preis', 'datum', 'homepage'];\r",
+									"    const props = ['modell.modell', 'preis', 'baujahr'];\r",
 									"    props.forEach(prop => pm.expect(message).to.include(prop));\r",
 									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
 									"    pm.expect(path[0]).to.be.equal('create');\r",
@@ -829,7 +543,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation {\r\n  create(\r\n    input: {\r\n      isbn: \"falsche-isbn\",\r\n      rating: 999,\r\n      art: DRUCKAUSGABE,\r\n      preis: -1,\r\n      rabatt: 0,\r\n      lieferbar: true,\r\n      datum: \"12345-123-123\",\r\n      homepage: \"anyHomepage\",\r\n      schlagwoerter: [\"JAVASCRIPT\"],\r\n      titel: {\r\n        titel: \"?!\"\r\n        untertitel: \"mutationinvalid\"\r\n      }\r\n    }\r\n  ) {\r\n      id\r\n  }\r\n}",
+								"query": "mutation {\r\n  create(\r\n    input: {\r\n               preis: -1,\r\n      einsatzbereit: true,\r\n      baujahr: \"12345-123-123\",\r\n      modell: {\r\n        modell: \"?!\"\r\n        }\r\n    }\r\n  ) {\r\n      id\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
@@ -880,7 +594,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: \"40\",\r\n      version: 0,\r\n      isbn: \"978-0-007-09732-6\",\r\n      rating: 5,\r\n      art: KINDLE,\r\n      preis: 444.44,\r\n      rabatt: 0.099,\r\n      lieferbar: false,\r\n      datum: \"2022-04-04\",\r\n      homepage: \"https://update.mutation\",\r\n      schlagwoerter: [\"JAVASCRIPT\", \"TYPESCRIPT\"]\r\n    }\r\n  ) {\r\n      version\r\n  }\r\n}",
+								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: \"40\",\r\n      version: 0,\r\n      preis: 444.44,\r\n      einsatzbereit: false,\r\n      baujahr: \"2022-04-04\",\r\n      }\r\n  ) {\r\n      version\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
@@ -914,7 +628,7 @@
 									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
 									"    const { message, path, extensions } = errors[0];\r",
 									"    pm.expect(message).to.be.a('string');\r",
-									"    const props = ['isbn', 'preis', 'datum', 'homepage'];\r",
+									"    const props = ['preis', 'baujahr'];\r",
 									"    props.forEach(prop => pm.expect(message).to.include(prop));\r",
 									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
 									"    pm.expect(path[0]).to.be.equal('update');\r",
@@ -938,7 +652,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: 40,\r\n      version: 0,\r\n      isbn: \"falsche-ISBN\",\r\n      rating: -1,\r\n      art: KINDLE,\r\n      preis: -1,\r\n      rabatt: 2,\r\n      lieferbar: false,\r\n      datum: \"12345-123-123\",\r\n      homepage: \"anyHomepage\"\r\n    }\r\n  ) {\r\n      version\r\n  }\r\n}",
+								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: 40,\r\n      version: 0,\r\n      preis: -1,\r\n      einsatzbereit: false,\r\n      baujahr: \"12345-123-123\",\r\n      }\r\n  ) {\r\n      version\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
@@ -994,7 +708,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: \"999999\",\r\n      version: 0,\r\n      isbn: \"978-0-007-09732-6\",\r\n      rating: 5,\r\n      art: DRUCKAUSGABE,\r\n      preis: 99.99,\r\n      rabatt: 0.099,\r\n      lieferbar: false,\r\n      datum: \"2022-02-01\",\r\n      schlagwoerter: [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n      homepage: \"https://nicht.vorhanden.de/\"\r\n    }\r\n  ) {\r\n      version\r\n  }\r\n}",
+								"query": "mutation {\r\n  update(\r\n    input: {\r\n      id: \"999999\",\r\n      version: 0,\r\n      preis: 99.99,\r\n      einsatzbereit: false,\r\n      baujahr: \"2022-02-01\",\r\n    }\r\n  ) {\r\n      version\r\n  }\r\n}",
 								"variables": ""
 							}
 						},
