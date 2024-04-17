@@ -259,11 +259,11 @@ export class FlugzeugGetController {
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        const buecher = await this.#service.find(query);
-        this.#logger.debug('get: %o', buecher);
+        const flugzeuge = await this.#service.find(query);
+        this.#logger.debug('get: %o', flugzeuge);
 
         // HATEOAS: Atom Links je Flugzeug
-        const flugzeugeModel = buecher.map((flugzeug) =>
+        const flugzeugeModel = flugzeuge.map((flugzeug) =>
             this.#toModel(flugzeug, req, false),
         );
         this.#logger.debug('get: buecherModel=%o', flugzeugeModel);
