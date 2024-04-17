@@ -22,7 +22,7 @@ schema {
 
 "Funktionen, um Bücherdaten zu lesen"
 type Query {
-  buecher(suchkriterien: SuchkriterienInput): [Flugzeug!]
+  flugeuge(suchkriterien: SuchkriterienInput): [Flugzeug!]
 
   flugzeug(id: ID!): Flugzeug
 }
