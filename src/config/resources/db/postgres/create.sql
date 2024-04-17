@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS flugzeug (
                   -- https://www.postgresql.org/docs/current/datatype-boolean.html
     einsatzbereit     boolean NOT NULL DEFAULT FALSE,
                   -- https://www.postgresql.org/docs/current/datatype-datetime.html
-    buajahr         date,
+    baujahr         date,
                   -- https://www.postgresql.org/docs/current/datatype-datetime.html
     erzeugt       timestamp NOT NULL DEFAULT NOW(),
     aktualisiert  timestamp NOT NULL DEFAULT NOW()
