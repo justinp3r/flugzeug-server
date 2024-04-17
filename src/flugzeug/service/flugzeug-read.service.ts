@@ -91,7 +91,7 @@ export class FlugzeugReadService {
         }
         if (this.#logger.isLevelEnabled('debug')) {
             this.#logger.debug(
-                'findById: flugzeug=%s, titel=%o',
+                'findById: flugzeug=%s, modell=%o',
                 flugzeug.toString(),
                 flugzeug.modell,
             );
