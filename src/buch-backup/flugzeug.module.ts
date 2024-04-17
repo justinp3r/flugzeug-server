@@ -16,7 +16,7 @@
  */
 import { FlugzeugGetController } from './rest/flugzeug-get.controller.js';
 import { FlugzeugMutationResolver } from './graphql/flugzeug-mutation.resolver.js';
-import { BuchQueryResolver } from './graphql/flugzeug-query.resolver.js';
+import { FlugzeugQueryResolver } from './graphql/flugzeug-query.resolver.js';
 import { FlugzeugReadService } from './service/flugzeug-read.service.js';
 import { FlugzeugWriteController } from './rest/flugzeug-write.controller.js';
 import { FlugzeugWriteService } from './service/flugzeug-write.service.js';
@@ -44,7 +44,7 @@ import { entities } from './entity/entities.js';
     providers: [
         FlugzeugReadService,
         FlugzeugWriteService,
-        BuchQueryResolver,
+        FlugzeugQueryResolver,
         FlugzeugMutationResolver,
         QueryBuilder,
     ],
