@@ -1,3 +1,4 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable sort-imports */
 /*
  * Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
@@ -121,12 +122,12 @@ export class FlugzeugMutationResolver {
             flugzeug: undefined,
         };
         const sitzplaetze = flugzeugDTO.sitzplaetze?.map((sitzplatzDTO) => {
-            const abbildung: Sitzplatz = {
+            const sitzplatz: Sitzplatz = {
                 id: undefined,
                 sitzplatzklasse: sitzplatzDTO.sitzplatzklasse,
                 flugzeug: undefined,
             };
-            return abbildung;
+            return sitzplatz;
         });
         const flugzeug: Flugzeug = {
             id: undefined,
