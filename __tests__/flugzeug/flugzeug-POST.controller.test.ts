@@ -37,7 +37,7 @@ const neuesFlugzeug: FlugzeugDTO = {
     einsatzbereit: true,
     baujahr: '2022-02-28',
     modell: {
-        modell: 'Titelpost',
+        modell: 'Modellpost',
     },
     sitzplaetze: [
         {
