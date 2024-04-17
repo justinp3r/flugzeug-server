@@ -25,8 +25,8 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type GraphQLQuery } from '../buch/buch-mutation.resolver.test.js';
-import { type GraphQLResponseBody } from '../buch/buch-query.resolver.test.js';
+import { type GraphQLQuery } from '../flugzeug/flugzeug-mutation.resolver.test.js';
+import { type GraphQLResponseBody } from '../flugzeug/flugzeug-query.resolver.test.js';
 import { HttpStatus } from '@nestjs/common';
 
 // -----------------------------------------------------------------------------
