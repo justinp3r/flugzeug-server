@@ -75,18 +75,18 @@ Webbrowser `http://localhost:8080` oder `https://localhost:8443` aufgerufen hat:
 
     Menüpunkt "Clients"
         <Create client> anklicken
-        Client ID   buch-client
+        Client ID   flugzeug-client
         <Next>
             "Capability config"
                 Client authentication       On
         <Next>
             Root URL                https://localhost:3000
             Valid redirect URIs     https://localhost:3000
-                                    https://buch:3000
+                                    https://flugzeug:3000
                                     https://oauth.pstmn.io/v1/callback
         <Save>
 
-        buch-client
+        flugzeug-client
             Tab "Roles"
                 <Create Role> anklicken
                 Role name       admin
@@ -102,25 +102,25 @@ Webbrowser `http://localhost:8080` oder `https://localhost:8443` aufgerufen hat:
     # https://www.keycloak.org/docs/latest/server_admin/index.html#assigning-permissions-using-roles-and-groups
     Menüpunkt "Realm roles"
         <Create role> anklicken
-            Role name       buch-admin
+            Role name       flugzeug-admin
             <Save> anklicken
         Breadcrumb "Realm roles" anklicken
-            "buch-admin" anklicken
+            "flugzeug-admin" anklicken
                 Drop-down Menü "Action" (in der rechten oberen Ecke):  "Add associated roles" auswählen
                 "Filter by clients"       auswählen und anklicken
-                "buch-client admin"       Haken setzen
+                "flugzeug-client admin"       Haken setzen
                 <Assign> anklicken
         Breadcrumb "Realm roles" anklicken
         <Create role> anklicken
-            Role name       buch-user
+            Role name       flugzeug-user
             <Save>
         Breadcrumb "Realm roles" anklicken
-            "buch-user" anklicken
+            "flugzeug-user" anklicken
                 Drop-down Menü "Action" (in der rechten oberen Ecke):  "Add associated roles" auswählen
                 "Filter by clients"       auswählen und anklicken
-                "buch-client user"        Haken setzen
+                "flugzeug-client user"        Haken setzen
                 <Assign> anklicken
-            WICHTIG: "buch-admin" und "buch-user" haben in der Spalte "Composite" den Wert "True"
+            WICHTIG: "flugzeug-admin" und "flugzeug-user" haben in der Spalte "Composite" den Wert "True"
 
     Menüpunkt "Users"
         <Add user>
@@ -137,7 +137,7 @@ Webbrowser `http://localhost:8080` oder `https://localhost:8443` aufgerufen hat:
             Tab "Role Mapping"
                 <Assign Role> anklicken
                     "Filter by clients" auswählen
-                        "buch-client admin"     Haken setzen     (ggf. blättern)
+                        "flugzeug-client admin"     Haken setzen     (ggf. blättern)
                         <Assign> anklicken
             Tab "Details"
                 Required user actions       Überprüfen, dass nichts ausgewählt ist
@@ -156,7 +156,7 @@ Webbrowser `http://localhost:8080` oder `https://localhost:8443` aufgerufen hat:
             Tab "Role Mapping"
                 <Assign Role> anklicken
                     "Filter by clients" auswählen
-                        "buch-client user"     Haken setzen     (ggf. blättern)
+                        "flugzeug-client user"     Haken setzen     (ggf. blättern)
                         <Assign> anklicken
             Tab "Details"
                 Required user actions       Überprüfen, dass nichts ausgewählt ist
@@ -171,7 +171,7 @@ Im Wurzelverzeichnis des Projekts in der Datei `.env` muss man die
 Umgebungsvariable `CLIENT_SECRET` auf folgenden Wert aus _Keycloak_ setzen:
 
 - Menüpunkt `Clients`
-- `buch-client` aus der Liste beim voreingestellten Tab `Clients list` auswählen
+- `flugzeug-client` aus der Liste beim voreingestellten Tab `Clients list` auswählen
 - Tab `Credentials` anklicken
 - Die Zeichenkette beim Label `Client Secret` kopieren und in der Datei `.env`
   bei der Umgebungsvariablen `CLIENT_SECRET` als Wert eintragen.

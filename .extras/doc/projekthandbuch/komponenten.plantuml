@@ -48,10 +48,10 @@ cloud {
     [nodemailer]
 }
 
-database "DB buch" {
-    [Tabelle buch]
-    [Tabelle titel]
-    [Tabelle abbildung]
+database "DB flugzeug" {
+    [Tabelle flugzeug]
+    [Tabelle modell]
+    [Tabelle sitzplatz]
 }
 
 node {
@@ -65,22 +65,22 @@ node {
 RESTClient ~~> [RequestLoggerMiddleware]
 GraphQLClient ~~> [RequestLoggerMiddleware]
 
-[RequestLoggerMiddleware] ~~> [BuchController]
-[RequestLoggerMiddleware] ~~> [BuchResolver]
+[RequestLoggerMiddleware] ~~> [FlugzeugController]
+[RequestLoggerMiddleware] ~~> [FlugzeugResolver]
 
-[BuchController] ..> [BuchService]
-[BuchResolver] ..> [BuchService]
-[BuchService] ..> [Repository<Buch>]
+[FlugzeugController] ..> [FlugzeugService]
+[FlugzeugResolver] ..> [FlugzeugService]
+[FlugzeugService] ..> [Repository<Flugzeug>]
 
-[Repository<Buch>] ~~> [TypeORM]
-[TypeORM] ~~> [Tabelle buch]
-[TypeORM] ~~> [Tabelle titel]
-[TypeORM] ~~> [Tabelle abbildung]
+[Repository<Flugzeug>] ~~> [TypeORM]
+[TypeORM] ~~> [Tabelle flugzeug]
+[TypeORM] ~~> [Tabelle modell]
+[TypeORM] ~~> [Tabelle sitzplatz]
 
-[BuchController] ..> [nest-keycloak-connect]
+[FlugzeugController] ..> [nest-keycloak-connect]
 [nest-keycloak-connect] ~~> [Keycloak]
 
-[BuchService] ..> [MailService]
+[FlugzeugService] ..> [MailService]
 [MailService] ~~> [nodemailer]
 [nodemailer] ~~> [Mailserver]
 
