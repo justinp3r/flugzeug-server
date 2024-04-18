@@ -137,7 +137,7 @@ export class FlugzeugReadService {
         if (flugzeuge.length === 0) {
             this.#logger.debug('find: Keine Buecher gefunden');
             throw new NotFoundException(
-                `Keine Buecher gefunden: ${JSON.stringify(suchkriterien)}`,
+                `Keine Flugzeuge gefunden: ${JSON.stringify(suchkriterien)}`,
             );
         }
         return flugzeuge;
