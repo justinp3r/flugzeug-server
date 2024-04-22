@@ -45,7 +45,7 @@ type FlugzeugDTO = Omit<Flugzeug, 'sitzplaetze' | 'aktualisiert' | 'erzeugt'>;
 // -----------------------------------------------------------------------------
 const idVorhanden = '1';
 
-const modellVorhanden = 'Alpha';
+const modellVorhanden = '747-Max';
 const teilModellVorhanden = 'a';
 const teilModellNichtVorhanden = 'abc';
 
@@ -133,7 +133,7 @@ describe('GraphQL Queries', () => {
         // then
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
-        expect(data.data!.fluzeug).toBeNull();
+        expect(data.data!.fluzeug).toBeUndefined();
 
         const { errors } = data;
 
@@ -268,7 +268,7 @@ describe('GraphQL Queries', () => {
         expect(extensions!.code).toBe('BAD_USER_INPUT');
     });
 
-    test('Buecher mit einsatzbereit=true', async () => {
+    test('Flugzeuge mit einsatzbereit=true', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
