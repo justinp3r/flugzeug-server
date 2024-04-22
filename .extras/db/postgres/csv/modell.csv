@@ -1,7 +1,7 @@
 id;modell;flugzeug_id
-1;Alpha;1
-20;Beta;20
-30;Gamma;30
-40;Delta;40
-50;Epsilon;50
-60;Phi;60
+1;747-Max;1
+20;747-Large;20
+30;A320;30
+40;A320-L;40
+50;F302;50
+60;787-M;60
