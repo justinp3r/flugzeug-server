@@ -41,7 +41,7 @@ include:
 # https://docs.docker.com/compose/compose-file/05-services
 services:
   flugzeug:
-    image: juergenzimmermann/flugzeug:2024.04.0-bookworm
+    image: flugzeug:2024.04.0-bookworm
     depends_on:
       db:
         condition: service_healthy
