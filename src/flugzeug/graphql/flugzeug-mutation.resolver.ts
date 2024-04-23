@@ -96,7 +96,6 @@ export class FlugzeugMutationResolver {
             flugzeug,
             version: versionStr,
         });
-        // TODO BadUserInputError
         this.#logger.debug('updateFlugzeug: versionResult=%d', versionResult);
         const payload: UpdatePayload = { version: versionResult };
         return payload;
