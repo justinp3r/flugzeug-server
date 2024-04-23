@@ -33,7 +33,6 @@ import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 
 const filename = 'ReadMe';
-// const filename = 'Installationsanleitung';
 const readme = fs.readFileSync(`${filename}.md`).toString();
 
 const htmlFile = await unified()
