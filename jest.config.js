@@ -21,7 +21,6 @@
 
 // import { type Config } from '@jest/types';
 
-// const jestConfig: Config.InitialOptions = {
 const jestConfig = {
     // globalSetup: '<rootDir>/dist/__tests__/global-setup.js',
     // globalTeardown: '<rootDir>/dist/__tests__/global-teardown.js',
