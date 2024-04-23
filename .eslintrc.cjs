@@ -26,7 +26,6 @@ const customizedStylistic = stylistic.configs.customize({
     indent: 4,
     jsx: false,
 });
-// console.log(`customizedStylistic.rules=${JSON.stringify(customizedStylistic.rules)}`);
 
 module.exports = {
     root: true,
