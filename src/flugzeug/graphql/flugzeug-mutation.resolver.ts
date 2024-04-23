@@ -78,7 +78,6 @@ export class FlugzeugMutationResolver {
 
         const flugzeug = this.#flugzeugDtoToFlugzeug(flugzeugDTO);
         const id = await this.#service.create(flugzeug);
-        // TODO BadUserInputError
         this.#logger.debug('createFlugzeug: id=%d', id);
         const payload: CreatePayload = { id };
         return payload;
