@@ -62,7 +62,6 @@ const logger = 'advanced-console';
 export const dbResourcesDir = resolve(nodeConfig.resourcesDir, 'db', dbType);
 console.debug('dbResourcesDir = %s', dbResourcesDir);
 
-// TODO records als "deeply immutable data structure" (Stage 2)
 // https://github.com/tc39/proposal-record-tuple
 let dataSourceOptions: DataSourceOptions;
 switch (dbType) {
