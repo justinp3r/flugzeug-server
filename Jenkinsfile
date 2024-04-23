@@ -141,7 +141,6 @@ pipeline {
         stage('Compile') {
             steps {
                 sh 'npx tsc --version'
-                // TODO Warum funktioniert npx nicht?
                 sh './node_modules/.bin/tsc'
             }
         }
