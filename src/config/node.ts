@@ -40,7 +40,6 @@ const port = (config.node?.port as number | undefined) ?? 3000; // eslint-disabl
  */
 // "as const" fuer readonly
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions
-// TODO records als "deeply immutable data structure" (Stage 2)
 // https://github.com/tc39/proposal-record-tuple
 export const nodeConfig = {
     host: computername,
