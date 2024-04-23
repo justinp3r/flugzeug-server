@@ -19,8 +19,6 @@
 // https://kulshekhar.github.io/ts-jest/docs/guides/esm-support
 // https://github.com/BenSjoberg/nest-esm-import-issue-example
 
-// import { type Config } from '@jest/types';
-
 const jestConfig = {
     // globalSetup: '<rootDir>/dist/__tests__/global-setup.js',
     // globalTeardown: '<rootDir>/dist/__tests__/global-teardown.js',
