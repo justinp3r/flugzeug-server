@@ -148,7 +148,7 @@ export class FlugzeugWriteService {
         await this.#repo.manager.transaction(async (transactionalMgr) => {
             // Das Flugzeug zur gegebenen ID mit Modell und Sitzpl. asynchron loeschen
 
-            // TODO "cascade" funktioniert nicht beim Loeschen
+            // TD "cascade" funktioniert nicht beim Loeschen
             const modellId = flugzeug.modell?.id;
             if (modellId !== undefined) {
                 await transactionalMgr.delete(Modell, modellId);
