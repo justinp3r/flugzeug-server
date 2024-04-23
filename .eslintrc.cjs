@@ -64,11 +64,6 @@ module.exports = {
 
     extends: [
         // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/recommended-type-checked.ts
-        // TODO https://github.com/typescript-eslint/typescript-eslint/issues/5908
-        // TODO https://github.com/typescript-eslint/typescript-eslint/issues/5938
-        // TODO https://github.com/jest-community/eslint-plugin-jest/issues/1408
-        // TODO https://github.com/microsoft/vscode-eslint/blob/747efb780e024eabc48b67ca68a2f8a0c594b753/playgrounds/flatConfig/eslint.config.js
-        // TODO https://stackoverflow.com/questions/74237042/how-to-correctly-configure-the-parser-plugins-with-eslints-new-flat-config
         'plugin:@typescript-eslint/recommended-type-checked',
         // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/stylistic-type-checked.ts
         'plugin:@typescript-eslint/stylistic-type-checked',
