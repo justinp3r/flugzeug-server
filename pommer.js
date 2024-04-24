@@ -20,6 +20,7 @@ class Pommer {
     }
 }
 
+
 const pom = new Pommer();
 
 // eslint-disable-next-line security-node/detect-crlf
