@@ -17,6 +17,7 @@
 class Pommer {
     constructor() {
         this.numberSolutions = 2;
+        
     }
 }
 
