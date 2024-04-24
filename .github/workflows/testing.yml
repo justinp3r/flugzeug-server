@@ -1,0 +1,27 @@
+name: test-my-planes
+
+on: push
+
+jobs:
+  super-lint:
+    name: lint code base
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4.1.4
+
+      - name: use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+        
+      - run: npm ci
+    
+      - name: run ESLint
+        run: npx eslint --config .eslintrc.cjs . --ext .js,.ts
+        
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  
